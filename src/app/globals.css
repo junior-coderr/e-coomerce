@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 
+.morpha{
+  background: rgba( 0, 0, 0, 0.08 );
+  /* backdrop-filter: blur( 0px ); */
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
