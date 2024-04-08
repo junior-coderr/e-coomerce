@@ -3,20 +3,21 @@ import { Kufam } from 'next/font/google'
 import { useState } from 'react'
 import { useEffect } from 'react' 
 import Link from 'next/link'
+import Image from "next/image";
+
 
 
 
 const kufam = Kufam({
     weight: '800',
     subsets: ['latin'],
-    // display: 'swap',
   })
 
 
 export default function Header({props}) {
 
     const [open, setOpen] = useState(false);
-
+    
     useEffect(() => {
         if(open){
             document.getElementById('a2').style.rotate='405deg'
@@ -52,11 +53,12 @@ export default function Header({props}) {
 
 
     return(
-        <header className="flex justify-between select-none ">
+        <header className="flex justify-between select-none">
             {/* //^Header */}
 
-            {/* //? Hamburger */}
-            <div className='relative w-8 cursor-pointer hidden'>
+            {/* // this hidden for desktop */}
+            {/* //? Hamburger */}   
+            <div className='relative w-8 cursor-pointer sm:hidden'>
                 <div className='text-3xl relative top-0 left-0 transition-all rotate-90  w-full h-[100%] z-[11] font-[400] burger-parent' onClick={()=>{setOpen(!open)}}>
                     <span id='a2' className='absolute origin-center left-0  duration-200 ease-in-out'>|</span>
                     <span id='a3' className='absolute origin-center left-[10px] duration-200 ease-in-out'>|</span>
@@ -75,8 +77,8 @@ export default function Header({props}) {
             {/* //? cart search */}
             <div>
                 <div className='flex gap-4'>
-                    <span className='bi bi-search text-[22px]  cursor-pointer'></span>
-                    <span className="bi bi-cart3 text-2xl cursor-pointer"></span>
+                   <Link href='/search'><span className='bi bi-search text-[22px]  cursor-pointer'></span></Link>
+                    <Link href='/cart'><span className="bi bi-cart3 text-2xl cursor-pointer"></span></Link>
                 </div>
             </div>
 

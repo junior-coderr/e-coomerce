@@ -1,8 +1,7 @@
 export default function Order() {
-
-    return (
-       <>
-       <h1>hellow rld</h1>
-       </>
-    )
+  return (
+    <>
+      <h1 className="text-4xl font-bold">Order Page!!</h1>
+    </>
+  );
 }
