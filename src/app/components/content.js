@@ -1,54 +1,108 @@
 "use client";
 import Image from "next/image";
 import { Prompt } from "next/font/google";
-import { useEffect, useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
+import { useSelector, useDispatch } from "react-redux";
+import { loadProducts } from "../../redux/slices/productSlice";
+import { scrollElement } from "../../redux/slices/scrollSlice";
+import { addLiked, removeLiked } from "../../redux/slices/liked";
+import { fetchProducts } from "../../redux/slices/fetchProduct.thunk";
 
 export const prompt = Prompt({
   weight: ["400"],
   subsets: ["latin"],
 });
 
-
-
- export default function Content() {
-  const [products, setProducts] = useState(['https://woodmart.b-cdn.net/wp-content/uploads/2017/03/light8_4-opt-860x983.jpg.webp','https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp','https://woodmart.b-cdn.net/wp-content/uploads/2016/09/product-clock-1-3.jpg','https://woodmart.b-cdn.net/wp-content/uploads/2016/09/product-clock-1-3.jpg'])
-  const [page, setPage] = useState(1);
+export default function Content() {
+  const [page, setPage] = useState(0);
   const loader = useRef(null);
 
+  const dispatch = useDispatch();
+  const { products } = useSelector((state) => state.products);
+  const scroll = useSelector((state) => state.scroll.scroll_elem);
+
   useEffect(() => {
+    if (scroll) {
+      document.getElementById(scroll).scrollIntoView({
+        behavior: "auto",
+        block: "center",
+        inline: "nearest",
+      });
+    }
 
     const options = {
-      root:document.body,
+      root: document.body,
       rootMargin: "0px",
-      threshold: 1.0
+      threshold: 1.0,
     };
 
     const observer = new IntersectionObserver(handleObserver, options);
+
     if (loader.current) {
       observer.observe(loader.current);
+      // console.log("Observer", observer);
     }
-
+    console.log("Page loaded");
   }, []);
 
-  useEffect(() => {
-    // Here you would fetch the next page of products from your database
-    // For simplicity, let's just duplicate our initial products
-    const newProducts = [...products, ...products];
-    setProducts(newProducts);
-  }, [page]);
+  // useEffect(() => {}, [page]);
 
   const handleObserver = (entities) => {
     const target = entities[0];
-    console.log('intersected!');
-    if (target.isIntersecting) {   
-      console.log('is in observation');
+
+    if (target.isIntersecting) {
       setPage((prev) => prev + 1);
+      dispatch(fetchProducts({ page }));
     }
+  };
+
+  const storeForScroll = (e) => {
+    dispatch(scrollElement(e.currentTarget.getAttribute("id")));
+  };
+
+  function mouseHover(e) {
+    e.preventDefault();
+
+    const element = document.createElement("i");
+    const host = e.currentTarget;
+
+    // Like clicked
+    element.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (host.dataset.liked === "true") {
+        element.classList.remove("bi-heart-fill");
+        element.classList.add("bi-heart");
+        element.style.color = "#0086D0";
+
+        host.dataset.liked = "false";
+      } else {
+        element.classList.remove("bi-heart");
+        element.classList.add("bi-heart-fill");
+        element.style.color = "#0086D0";
+
+        host.dataset.liked = "true";
+      }
+    });
+
+    element.classList.add("bi");
+
+    if (host.dataset.liked === "true") {
+      element.classList.add("bi-heart-fill");
+    } else {
+      element.classList.add("bi-heart");
+    }
+
+    element.classList.add("heart");
+    element.classList.add("shadow-xl");
+    e.currentTarget.appendChild(element);
   }
 
-
+  function mouseLeave(e) {
+    e.preventDefault();
+    e.currentTarget.removeChild(e.currentTarget.lastChild);
+    console.log("Page previous", page);
+  }
   return (
     <>
       {/* //?Content */}
@@ -61,8 +115,8 @@ export const prompt = Prompt({
         {/* //?content title */}
         <div className="flex justify-start gap-1 items-center">
           <span className={prompt.className}>
-            <h1 className="text-[25px] font-semibold text-[#000000] p-2">
-              PRODUCTS
+            <h1 className="text-[28px] font-semibold text-[#000000] p-2">
+              Products
             </h1>
           </span>
           <span className="w-full h-[1px] bg-[#dfdfdf]"></span>
@@ -70,56 +124,67 @@ export const prompt = Prompt({
         <br />
 
         {/* //?Products */}
-         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 gap-y-2 md:gap-3 lg:gap-5 "> 
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 gap-y-2 md:gap-3 lg:gap-5 ">
+          {products &&
+            products.length > 0 &&
+            products.map((product, index) => (
+              <Link
+                scroll={false}
+                href={`/products/${product._id}`}
+                // href='/dashboard'
+                id={`product-${product._id}`}
+                key={index}
+                className="relative md:hover:shadow-lg md: hover:z-10  md:hover:scale-105 md:hover:mt-[-30px] duration-100 ease-in-out rounded-md"
+                onMouseEnter={mouseHover}
+                onMouseLeave={mouseLeave}
+                onClick={storeForScroll}
+                data-liked={product.liked}
+              >
+                {}
+                <div className="rounded-md  flex flex-col justify-center gap-2 items-center cursor-pointer">
+                  <div className="relative overflow-hidden">
+                    <Image
+                      className="rounded-md bg-[#ac4040] hover:scale-110 transition duration-500 ease-in-out"
+                      src={product.product_image}
+                      width={500}
+                      height={500}
+                      alt="Picture of the watch"
+                    />
+                  </div>
 
-
-          {products.map((product, index) => (
-            <Link  scroll={false} href={`/products/${index}`} key={index}>
-             <div className="p-1 rounded-md  flex flex-col justify-center gap-2 items-center cursor-pointer">
-             <Image
-              className="bg-[#https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp] rounded-md"
-              src={product}
-              width={500}
-              height={500}
-              alt="Picture of the watch"
-            />
-             <div className="w-[100%] flex flex-col gap-1 justify-center items-center">
-              <h1 className="text-lg font-semibold text-[#313131] text-center">
-                Product name
-              </h1>
-              <p className="text-sm text-[#7b7b7b] text-center">
-                Description of the product
-              </p>
-              <span className="text-[#0086D0] text-sm font-medium">
-                $299.00
-              </span>
-            </div>
-            
-              </div>
-              
+                  <div className="w-[100%] flex flex-col gap-1 justify-center items-center">
+                    <h1 className="text-lg font-semibold text-[#313131] text-center">
+                      {product.product_name}
+                    </h1>
+                    <p className="text-sm text-[#7b7b7b] text-center inline-block whitespace-nowrap overflow-hidden text-ellipsis w-full px-2 md:px-5">
+                      {product.product_description}
+                    </p>
+                    <span className="text-[#0086D0] text-sm font-medium">
+                      {product.product_price}
+                    </span>
+                  </div>
+                </div>
               </Link>
-          ))}
-         
-
-
-    
+            ))}
         </div>
 
-        <div className="loader relative py-5 flex justify-center items-center" ref={loader}>
-        <div id="load">
-              <div>-</div>
-              <div>-</div>
-              <div>-</div>
-              <div>-</div>
-              <div>-</div>
-              <div>-</div>
-              <div>-</div>
-        </div>
-      </div>
+        <div></div>
 
+        <div
+          className="loader relative py-5 flex justify-center items-center"
+          ref={loader}
+        >
+          <div id="load">
+            <div>-</div>
+            <div>-</div>
+            <div>-</div>
+            <div>-</div>
+            <div>-</div>
+            <div>-</div>
+            <div>-</div>
+          </div>
+        </div>
       </div>
     </>
   );
-
- }
-
+}

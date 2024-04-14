@@ -1,14 +1,25 @@
 import { NextResponse } from "next/server";
-// import Product from '../../models/base.db.js';
-// import mongoose from "mongoose";
-// mongoose.connect(process.env.MONGODB_URI, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//     useFindAndModify: false,
-//     useCreateIndex: true
-// });
-// export default function POST(req){
+import Product from "../../models/base.db.js";
+import dbConnect from "../../models/connect.db.js";
 
-//     return NextResponse.json({message: 'Hello World'}, {status: 200});
+export async function POST(req) {
 
-// }
+  await dbConnect();
+
+  const { page, limit = 10 } = req.body;
+  const skip = (page - 1) * limit;
+
+  try {
+  const res =await Product.find()
+    .skip(skip) 
+    .limit(limit) 
+    .exec();
+        return NextResponse.json({ products:res });
+    
+        
+  } catch (error) {
+    console.log("error",error);
+  }
+
+
+}

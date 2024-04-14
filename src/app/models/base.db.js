@@ -17,8 +17,8 @@ const Product_Schema = mongoose.Schema({
         type: String,
         required: true
     },
-    product_category: {
-        type: String,
+    liked: {
+        type: Boolean,
         required: true
     },
 });
