@@ -51,7 +51,7 @@ export default function Header({ props }) {
       {/* //? Hamburger */}
       <div className="relative w-8 cursor-pointer sm:hidden">
         <div
-          className="text-3xl relative top-0 left-0 transition-all rotate-90  w-full h-[100%] z-[11] font-[400] burger-parent"
+          className="text-3xl relative top-0 left-0 transition-all rotate-90  w-full h-[100%] z-[5] font-[400] burger-parent"
           onClick={() => {
             setOpen(!open);
           }}

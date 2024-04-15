@@ -3,55 +3,17 @@ import Header from "../components/hamPage.js";
 import HamPage from "../components/header.js";
 import Content from "../components/content.js";
 import Link from "next/link";
+import { useSelector, useDispatch } from "react-redux";
+import { useInView } from "react-intersection-observer";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 export default function RootLayout({ children }) {
-  const [current_element, set_current_element] = useState(null);
   const pathname = usePathname();
-  let baseName = pathname.split("/").pop();
-  const prevState = useRef(null);
-  const router = useRouter();
-
-  function useLocalStorage(value) {
-    if (typeof window === "undefined") return null;
-    window.localStorage.setItem("myState", value);
-  }
-
-  if (baseName === "dashboard") {
-    baseName = "home";
-    useLocalStorage(baseName);
-  } else {
-    useLocalStorage(baseName);
-  }
-
-  useEffect(() => {
-    // console.log(baseName);
-    if (prevState.current == null) {
-      set_current_element(localStorage.getItem("myState"));
-    }
-    if (prevState.current) {
-      document.getElementById(prevState.current).style.opacity = "50%";
-      document.getElementById(prevState.current).style.fontWeight = "500";
-      document.getElementById(prevState.current).style.borderRight = "none";
-
-      document.getElementById(prevState.current).style.backgroundColor =
-        "white";
-    }
-
-    prevState.current = current_element;
-    if (prevState.current) {
-      // console.log(prevState.current);
-      document.getElementById(current_element).style.opacity = "100%";
-      document.getElementById(current_element).style.fontWeight = "600";
-      document.getElementById(current_element).style.fontSize = "16px";
-      document.getElementById(current_element).style.borderRight =
-        "4px solid #0186D0";
-      document.getElementById(current_element).style.backgroundColor =
-        "#EEF5FF";
-    }
-  }, [current_element]);
+  const [style, setStyle] = useState(
+    "opacity-100 font-[600] text-[16px] border-r-[4px] border-r-[#0186D0] bg-[#EEF5FF]"
+  );
 
   return (
     <>
@@ -65,46 +27,42 @@ export default function RootLayout({ children }) {
         <div className="gap-10 flex flex-col justify-center items-end max-w-fit select-none hidden sm:flex">
           <Link
             href="/dashboard"
-            className="cursor-pointer opacity-50 hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-[#0186D0] w-[85px] font-medium p-2"
-            onClick={() => {
-              set_current_element("home");
-            }}
+            className={`${
+              pathname == "/dashboard" ? style : "opacity-50"
+            } ${"cursor-pointer opacity-50 hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-[#0186D0] w-[85px] font-medium p-2"}`}
             id="home"
           >
-            {" "}
             Home
           </Link>
-          <span
-            className="cursor-pointer opacity-50 hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-[#0186D0] w-[85px] font-medium p-2"
-            onClick={() => {
-              set_current_element("about");
-            }}
+          <Link
+            href="/dashboard"
+            className={`${
+              pathname == "/dashboard/about" ? style : "opacity-50"
+            } ${"cursor-pointer opacity-50 hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-[#0186D0] w-[85px] font-medium p-2"}`}
             id="about"
           >
             About
-          </span>
+          </Link>
           <Link
             href="/dashboard/order"
-            className="cursor-pointer opacity-50 hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-[#0186D0] w-[85px] font-medium p-2"
-            onClick={() => {
-              set_current_element("order");
-            }}
+            className={`${
+              pathname == "/dashboard/order" ? style : "opacity-50"
+            } ${"cursor-pointer opacity-50 hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-[#0186D0] w-[85px] font-medium p-2"}`}
             id="order"
           >
             Orders
           </Link>
           <Link
             href="/contact"
-            className="cursor-pointer opacity-50 hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-[#0186D0] w-[85px] font-medium p-2"
-            onClick={() => {
-              set_current_element("contact");
-            }}
+            className={`${
+              pathname == "/contact" ? style : "opacity-50"
+            } ${"cursor-pointer opacity-50 hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-[#0186D0] w-[85px] font-medium p-2"}`}
             id="contact"
           >
             Contact
           </Link>
         </div>
-
+        <Content />
         {children}
       </div>
     </>

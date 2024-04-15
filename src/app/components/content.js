@@ -8,6 +8,7 @@ import { loadProducts } from "../../redux/slices/productSlice";
 import { scrollElement } from "../../redux/slices/scrollSlice";
 import { addLiked, removeLiked } from "../../redux/slices/liked";
 import { fetchProducts } from "../../redux/slices/fetchProduct.thunk";
+import { motion } from "framer-motion";
 
 export const prompt = Prompt({
   weight: ["400"],
@@ -23,13 +24,13 @@ export default function Content() {
   const scroll = useSelector((state) => state.scroll.scroll_elem);
 
   useEffect(() => {
-    if (scroll) {
-      document.getElementById(scroll).scrollIntoView({
-        behavior: "auto",
-        block: "center",
-        inline: "nearest",
-      });
-    }
+    // if (scroll) {
+    //   document.getElementById(scroll).scrollIntoView({
+    //     behavior: "auto",
+    //     block: "center",
+    //     inline: "nearest",
+    //   });
+    // }
 
     const options = {
       root: document.body,
@@ -41,7 +42,6 @@ export default function Content() {
 
     if (loader.current) {
       observer.observe(loader.current);
-      // console.log("Observer", observer);
     }
     console.log("Page loaded");
   }, []);
@@ -130,18 +130,22 @@ export default function Content() {
             products.map((product, index) => (
               <Link
                 scroll={false}
-                href={`/products/${product._id}`}
+                href={`/dashboard/products/${product._id}`}
                 // href='/dashboard'
                 id={`product-${product._id}`}
                 key={index}
-                className="relative md:hover:shadow-lg md: hover:z-10  md:hover:scale-105 md:hover:mt-[-30px] duration-100 ease-in-out rounded-md"
+                className="relative md:hover:shadow-lg md: hover:z-[3]  md:hover:scale-105 md:hover:mt-[-30px] duration-100 ease-in-out rounded-md"
                 onMouseEnter={mouseHover}
                 onMouseLeave={mouseLeave}
                 onClick={storeForScroll}
                 data-liked={product.liked}
               >
-                {}
-                <div className="rounded-md  flex flex-col justify-center gap-2 items-center cursor-pointer">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="rounded-md  flex flex-col justify-center gap-2 items-center cursor-pointer"
+                >
                   <div className="relative overflow-hidden">
                     <Image
                       className="rounded-md bg-[#ac4040] hover:scale-110 transition duration-500 ease-in-out"
@@ -163,7 +167,7 @@ export default function Content() {
                       {product.product_price}
                     </span>
                   </div>
-                </div>
+                </motion.div>
               </Link>
             ))}
         </div>

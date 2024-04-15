@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 export default function Providers({ children }) {
   useEffect(() => {
-    console.log("Provider loaded");
+    // console.log("Provider loaded");
   }, []);
   return <Provider store={store}>{children}</Provider>;
 }

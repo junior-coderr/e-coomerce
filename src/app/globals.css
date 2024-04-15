@@ -13,8 +13,8 @@
   display: none;
 }
 
-.heart{
-  color: #0086D0;
+.heart {
+  color: #0086d0;
   font-size: 18px;
   top: 0;
   left: 0;
@@ -24,15 +24,31 @@
   position: absolute;
   transition-duration: 150ms;
   width: 40px;
-  height:40px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
   margin: 10px;
 }
-.heart:hover{
-   font-size:20px;
+.heart:hover {
+  font-size: 20px;
+}
+
+/* WebKit (Chrome, Safari, Opera) */
+#load::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox */
+#load {
+  scrollbar-width: none;
+}
+
+/* Internet Explorer and Edge */
+#load {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 #load {
@@ -42,11 +58,8 @@
   height: 36px;
   top: 40%;
   overflow: auto;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
-  cursor:progress;
+  cursor: progress;
 }
 
 #load div {
@@ -63,7 +76,7 @@
   -o-transform: rotate(180deg);
   -moz-transform: rotate(180deg);
   -webkit-transform: rotate(180deg);
-  color: #0086D0;
+  color: #0086d0;
 }
 
 #load div:nth-child(2) {
