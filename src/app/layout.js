@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={mont.className}>
-        <div className="max-w-[1200px] p-4 pb-10 w-[100%] min-h-[360px] relative m-auto h-[100svh]  overflow-auto">
+        <div className="max-w-[1200px] p-4 pb-[67px]  w-[100%] min-h-[360px] relative m-auto h-[100svh]  overflow-auto">
           <div className="flex flex-col justify-start h-[100%]">
             <Providers>{children}</Providers>
           </div>

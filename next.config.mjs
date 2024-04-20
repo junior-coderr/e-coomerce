@@ -4,6 +4,9 @@ const nextConfig = {
     domains: ["woodmart.b-cdn.net"],
   },
   reactStrictMode: false,
+  api: {
+    bodyParser: true,
+  },
 };
 
 export default nextConfig;

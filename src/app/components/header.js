@@ -3,7 +3,7 @@ import { Kufam } from "next/font/google";
 import { useState } from "react";
 import { useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { set } from "mongoose";
 
 const kufam = Kufam({
   weight: "800",
@@ -12,6 +12,7 @@ const kufam = Kufam({
 
 export default function Header({ props }) {
   const [open, setOpen] = useState(false);
+  const [input, setInput] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -35,7 +36,6 @@ export default function Header({ props }) {
       document.querySelector(".burger-parent").style.fontWeight = "400";
 
       document.getElementById("hamPage").style.backdropFilter = "blur(0px)";
-      // document.getElementById('hamPage').style.transform='scale(.9)';
 
       setTimeout(() => {
         document.getElementById("hamPage").style.display = "none";
@@ -44,7 +44,7 @@ export default function Header({ props }) {
   }, [open]);
 
   return (
-    <header className="flex justify-between select-none">
+    <header className="flex justify-between select-none p-2">
       {/* //^Header */}
 
       {/* // this hidden for desktop */}
@@ -72,16 +72,36 @@ export default function Header({ props }) {
       </div>
 
       {/* //? Title */}
-      <div>
-        <h1 className={`${kufam.className} text-3xl`}>Zestora</h1>
+      <div className="flex justify-center items-center">
+        <Link className={`${kufam.className} text-3xl`} href={"/dashboard"}>
+          Zestora
+        </Link>
       </div>
 
       {/* //? cart search */}
       <div>
-        <div className="flex gap-4">
-          <Link href="/dashboard/search">
+        <div className="flex gap-4 items-center">
+          <Link href="/dashboard/search" className="md:hidden">
             <span className="bi bi-search text-[22px]  cursor-pointer"></span>
           </Link>
+          <div className="relative hidden md:flex  border-[1.3px] border-[#8B8BA3] justify-center items-center p-[6px] rounded-md px-4">
+            <span className="bi bi-search text-[20px]"></span>
+            <input
+              onFocus={() => setInput(true)}
+              onBlur={() => setInput(false)}
+              type="text"
+              // blue color
+              className="] placeholder:text-[#8B8BA3]  px-3  outline-none w-[250px]  text-[#000000] text-[14px] font-medium"
+              placeholder="Search Unique"
+            />
+
+            {/* suggestions */}
+            <div
+              className={`${
+                input ? "flex" : "hidden"
+              } ${"absolute rounded-md z-10 p-2 m-2 w-full h-[200px] bg-white border-[1.2px] top-[100%]"}`}
+            ></div>
+          </div>
           <Link href="/cart">
             <span className="bi bi-cart3 text-2xl cursor-pointer"></span>
           </Link>
