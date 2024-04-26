@@ -8,6 +8,13 @@ import { addLiked, removeLiked } from "../../redux/slices/liked";
 import { fetchProducts } from "../../redux/slices/fetchProduct.thunk";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import * as NProgress from "nprogress";
+// Import Swiper React components
+import { Swiper, SwiperSlide } from "swiper/react";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/pagination";
 
 export const prompt = Prompt({
   weight: ["400"],
@@ -50,9 +57,18 @@ export default function AnimatedListComponent() {
 
   return (
     <>
+      {/* <div className="flex flex-col gap-2 items-center overflow-y-auto"> */}
+      {/* special content */}
+      {/* <div className="h-[50%]">
+          <h1 className="Caveat text-6xl font-extrabold letter-spacing-2">
+            Welcome to the worlds most affordabe commerce store!
+          </h1>
+        </div> */}
+
       {/* //?Content */}
+
       <div
-        className="w-[100%] overflow-y-auto h-[100%] overflow-scroll"
+        className="w-[100%] overflow-y-auto h-100%] overflow-scroll"
         // style={{ display: "none" }}
         id="content-scroll"
       >
@@ -94,6 +110,7 @@ export default function AnimatedListComponent() {
           </div>
         </div>
       </div>
+      {/* </div> */}
     </>
   );
 }
@@ -113,7 +130,11 @@ function Content({ product }) {
   function operateLike(e) {
     let host = e.currentTarget.parentElement;
     let element = e.currentTarget;
+
     e.preventDefault();
+    setTimeout(() => {
+      NProgress.done();
+    }, 100);
     if (element.dataset.liked === "true") {
       element.classList.remove("bi-heart-fill");
       element.classList.add("bi-heart");
@@ -180,8 +201,6 @@ function Content({ product }) {
       id={`product-${product._id}`}
       // key={index}
       className="relative md:hover:shadow-lg md: hover:z-[3]  md:hover:scale-105 md:hover:mt-[-30px] duration-100 ease-in-out rounded-md"
-      // onMouseEnter={mouseHover}
-      // onMouseLeave={mouseLeave}
       data-liked={product.liked}
     >
       <motion.div

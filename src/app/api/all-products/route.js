@@ -13,5 +13,7 @@ export async function POST(req) {
     return NextResponse.json({ products: res });
   } catch (error) {
     console.log("error", error);
+    // returning undefined
+    return NextResponse.json({ products: [] });
   }
 }

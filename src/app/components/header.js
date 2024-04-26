@@ -103,6 +103,10 @@ export default function Header({ props }) {
             ></div>
           </div>
           <Link href="/cart">
+            <span className="bi bi-heart-fill text-2xl cursor-pointer text-[#0086D0]"></span>
+            <i class=""></i>
+          </Link>
+          <Link href="/cart">
             <span className="bi bi-cart3 text-2xl cursor-pointer"></span>
           </Link>
         </div>

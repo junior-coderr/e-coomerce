@@ -26,13 +26,17 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+
     if (!isRegistered) {
+      cookieStore.set("token", sign({ name, email, isRegistered: true }));
+
       const createdUser = await new User({ name, email }).save();
       return NextResponse.json(
         { success: true, message: "Verified", data: createdUser },
         { status: 200 }
       );
     } else {
+      cookieStore.set("token", sign({ name, email, isRegistered: true }));
       const createdUser = "none";
       return NextResponse.json(
         { success: true, message: "Verified", data: "createdUser" },
