@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { verify } from "./app/lib/jwt";
+import { verify } from "./lib/jwt";
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request) {

@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { sign, verify, decode } from "../../lib/jwt";
+import { sign, verify, decode } from "../../../lib/jwt";
 import { NextResponse } from "next/server";
 import connectDB from "@/models/connect.db";
 import User from "@/models/user";

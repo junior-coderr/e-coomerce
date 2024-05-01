@@ -82,10 +82,10 @@ export default function Header({ props }) {
       <div>
         <div className="flex gap-4 items-center">
           <Link href="/dashboard/search" className="md:hidden">
-            <span className="bi bi-search text-[22px]  cursor-pointer"></span>
+            <span className="bi bi-search text-xl md:text-[22px]  cursor-pointer"></span>
           </Link>
           <div className="relative hidden md:flex  border-[1.3px] border-[#8B8BA3] justify-center items-center p-[6px] rounded-md px-4">
-            <span className="bi bi-search text-[20px]"></span>
+            <span className="bi bi-search text-xl"></span>
             <input
               onFocus={() => setInput(true)}
               onBlur={() => setInput(false)}
@@ -103,11 +103,11 @@ export default function Header({ props }) {
             ></div>
           </div>
           <Link href="/cart">
-            <span className="bi bi-heart-fill text-2xl cursor-pointer text-[#0086D0]"></span>
+            <span className="bi bi-heart-fill text-xl md:text-2xl cursor-pointer text-[#0086D0]"></span>
             <i class=""></i>
           </Link>
           <Link href="/cart">
-            <span className="bi bi-cart3 text-2xl cursor-pointer"></span>
+            <span className="bi bi-cart3 text-xl md:text-2xl cursor-pointer"></span>
           </Link>
         </div>
       </div>

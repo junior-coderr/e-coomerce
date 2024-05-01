@@ -3,7 +3,7 @@ import User from "@/models/user";
 import { sendVerificationEmail } from "@/helpers/sendVerificationEmail";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { sign, verify, decode } from "../../lib/jwt";
+import { sign, verify, decode } from "../../../lib/jwt";
 import bcrypt from "bcrypt";
 
 export async function POST(req) {

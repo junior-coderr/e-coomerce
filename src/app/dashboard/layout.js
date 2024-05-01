@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
             href="/dashboard"
             className={`${
               pathname == "/dashboard" ? style : "opacity-50"
-            } ${"cursor-pointer hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-[#0186D0] w-[85px] font-medium p-2"}`}
+            } ${"cursor-pointer hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-theme w-[85px] font-medium p-2"}`}
             id="home"
           >
             Home
@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
             href="/dashboard/order"
             className={`${
               pathname == "/dashboard/order" ? style : "opacity-50"
-            } ${"cursor-pointer hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-[#0186D0] w-[85px] font-medium p-2"}`}
+            } ${"cursor-pointer hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-theme w-[85px] font-medium p-2"}`}
             id="order"
           >
             Orders
@@ -46,7 +46,7 @@ export default function RootLayout({ children }) {
             href="/dashboard"
             className={`${
               pathname == "/dashboard/about" ? style : "opacity-50"
-            } ${"cursor-pointer hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-[#0186D0] w-[85px] font-medium p-2"}`}
+            } ${"cursor-pointer hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-theme w-[85px] font-medium p-2"}`}
             id="about"
           >
             Profile
@@ -55,7 +55,7 @@ export default function RootLayout({ children }) {
             href="/contact"
             className={`${
               pathname == "/contact" ? style : "opacity-50"
-            } ${"cursor-pointer hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-[#0186D0] w-[85px] font-medium p-2"}`}
+            } ${"cursor-pointer hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-theme w-[85px] font-medium p-2"}`}
             id="contact"
           >
             Contact

@@ -9,10 +9,14 @@ const user_schema = mongoose.Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Wishlist" }],
   cart: [{ type: mongoose.Schema.Types.ObjectId, ref: "Cart" }],
-  orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+  orders: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+    unique: true, // Ensures array contains unique elements
+  },
   address: {
     type: Array,
   },
