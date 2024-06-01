@@ -9,15 +9,30 @@ export default function HamPage() {
     >
       <br />
       <br />
-      <div className="flex flex-col gap-1">
-        <div className="font-semibold text-2xl hover:bg-[white] p-4">
-          <Link href="/dashboard">Home</Link>
+      <div className="flex flex-col gap-4 pt-5 justify-start items-center h-[100%] mt-8">
+        <div className="font-semibold text-2xl p-4 flex gap-4 hover:bg-[rgb(4,56,105,.1)] rounded-lg items-center justify-start w-[270px]">
+          <i className="bi bi-binoculars-fill text-[40px] text-[#043869]"></i>
+          <Link href="/dashboard/search" className="text-5xl">
+            Search
+          </Link>
         </div>
-        <div className="font-semibold text-2xl hover:bg-[white] p-4">
-          <Link href="/cart">Cart</Link>
+        <div className="font-semibold text-2xl  p-4 flex gap-3 items-center hover:bg-[rgb(4,56,105,.1)] justify-start w-[270px]">
+          <i className="bi bi-heart-fill text-[40px] text-[#043869]"></i>
+          <Link href="/wishlist" className="text-5xl">
+            Wishlist
+          </Link>
         </div>
-        <div className="font-semibold text-2xl hover:bg-[white] p-4">
-          <Link href="/contact">Contact</Link>
+        <div className="font-semibold text-2xl  p-4 flex gap-3 items-center hover:bg-[rgb(4,56,105,.1)] justify-start w-[270px]">
+          <i className="bi bi-house-door-fill text-[40px] text-[#043869]"></i>
+          <Link href="/dashboard" className="text-5xl">
+            Home
+          </Link>
+        </div>
+        <div className="font-semibold text-2xl  p-4 flex gap-3 items-center hover:bg-[rgb(4,56,105,.1)] justify-start w-[270px]">
+          <i className="bi bi-telephone-fill text-[40px] text-[#043869]"></i>
+          <Link href="/contact" className="text-5xl">
+            Contact
+          </Link>
         </div>
       </div>
     </div>

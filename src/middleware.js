@@ -1,23 +1,46 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verify } from "./lib/jwt";
+import { getToken } from "next-auth/jwt";
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request) {
-  console.log("request.url", "yes!!");
-
-  //   displaying base path
+  // console.log("request.TEST");
   const url = new URL(request.url);
 
+  // for profile page
+
+  if (cookies().get("token")) {
+    var isVerified = await verify(cookies().get("token").value);
+    // checking is validity of token
+    console.log("isVerified", isVerified);
+  } else {
+    console.log("ss", cookies().get("token"));
+    var isVerified = null;
+  }
+
+  if (url.pathname.startsWith("/profile")) {
+    if (isVerified) {
+      // console.log("token", token);
+      // console.log("isVerified", isVerified);
+      return;
+    } else {
+      // console.log("request.url2", request.url);
+      return NextResponse.redirect(new URL("/register/login", request.url));
+    }
+  }
+
+  // for  verfiy page
+
   if (url.pathname.startsWith("/register/signup/verify")) {
-    console.log("request.url\n \n", request.url);
+    // console.log("request.url\n \n", request.url);
 
     try {
       const isVerified = await verify(cookies().get("token").value);
       if (isVerified.otp) {
         return;
       }
-      console.log("isVerified", isVerified);
+      // console.log("isVerified", isVerified);
       return NextResponse.redirect(new URL("/register/login", request.url));
 
       // return NextResponse.redirect(new URL("/dashboard", request.url));
@@ -26,10 +49,13 @@ export async function middleware(request) {
       return NextResponse.redirect(new URL("/register/login", request.url));
     }
   }
-  //   return NextResponse.redirect(new URL("/", request.url));
+
+  if (url.pathname.startsWith("/")) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
 }
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: "/register/signup/verify",
+  matcher: ["/register/signup/verify", "/profile:path*", "/"],
 };

@@ -11,7 +11,8 @@ export const verify = async (token) => {
 
     return verified.payload;
   } catch (error) {
-    throw new Error("your token has expired!");
+    // throw new Error("your token has expired!");
+    return null;
   }
 };
 

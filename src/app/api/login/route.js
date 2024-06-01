@@ -35,7 +35,7 @@ export async function POST(req) {
         isRegistered: true,
       });
       cookieStore.set("token", token, {
-        maxAge: 60 * 60 * 24 * 7,
+        maxAge: 60 * 60,
         path: "/",
         httpOnly: true,
       });

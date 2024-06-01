@@ -4,6 +4,7 @@ import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useSession, signIn } from "next-auth/react";
 
 export default function Register() {
   const router = useRouter();
@@ -36,6 +37,7 @@ export default function Register() {
     }
     try {
       toast.loading("Sending...");
+      setCondition(false);
       const result = await fetch("/api/signup", {
         method: "POST",
         headers: {
@@ -44,6 +46,8 @@ export default function Register() {
         body: JSON.stringify({ name, email }),
       });
       const response = await result.json();
+      setCondition(true);
+
       toast.remove();
       console.log(response);
       if (response.success) {
@@ -106,11 +110,17 @@ export default function Register() {
         </span>
 
         <div className="flex gap-2">
-          <button className="bg-[#] shadow-md text-[#616173] flex gap-2 justify-center items-center p-3 m-2  w-[135px] rounded-sm text-sm">
+          <button
+            className="bg-[#] shadow-md text-[#616173] flex gap-2 justify-center items-center p-3 m-2  w-[135px] rounded-sm text-sm"
+            onClick={() => signIn("google")}
+          >
             <i class="bi bi-google text-[#017BF9]"></i>
             Google
           </button>
-          <button className="bg-[#017BF9] shadow-xl text-white flex gap-2 justify-center items-center p-3 m-2  w-[135px] rounded-sm text-sm">
+          <button
+            className="bg-[#017BF9] shadow-xl text-white flex gap-2 justify-center items-center p-3 m-2  w-[135px] rounded-sm text-sm"
+            onClick={() => signIn("twitter")}
+          >
             <i class="bi bi-facebook"></i>
             Facebook
           </button>

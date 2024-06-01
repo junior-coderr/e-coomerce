@@ -1,11 +1,14 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 export default function Order() {
-  useEffect(() => {
-    console.log("Order page loaded");
-  }, []);
+  const { data: session, status } = useSession();
 
-  return <>home</>;
+  if (status === "authenticated") {
+    return <p>Signed in as {session.user.email}</p>;
+  }
+
+  return <a href="/register/signup">Sign in</a>;
 }

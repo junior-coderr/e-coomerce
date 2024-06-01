@@ -70,13 +70,20 @@ export default function AnimatedListComponent() {
         className="w-[100%] overflow-y-auto h-100%] overflow-scroll"
         id="content-scroll"
       >
-        <br />
         {/* <br /> */}
 
         <div>
-          <div className=" gap-1 bg-[#f3f8fd] rounded-md flex-wrap-reverse  mb-10 flex justify-center md:justify-between items-center ">
-            <div className="p-5 flex flex-col gap-y-6">
-              <div className="text-5xl font-[600] text-[#05386a] ">
+          <div className=" gap-8 p-6  bg-[#f3f8fd] rounded-md  mb-10 flex flex-col md:flex-row-reverse justify-center md:justify-between items-center ">
+            <div className="">
+              <Image
+                className=""
+                src="https://woodmart.b-cdn.net/wp-content/uploads/2024/02/slider-main-demo-3-light-opt.jpg.webp"
+                width={500}
+                height={500}
+              ></Image>
+            </div>
+            <div className="p- flex flex-col gap-y-6">
+              <div className="text-5xl font-[800] text-[#05386a] ">
                 <span className="relative">
                   Shop{" "}
                   <span className="w-full h-[30%] bg-[#017df931] absolute left-0 bottom-1 rotate-2"></span>
@@ -87,35 +94,33 @@ export default function AnimatedListComponent() {
               </div>
 
               {/* trust icons with design  */}
-              <div className="flex gap-1 p-4  text-sm justify-around items-center w-full bg-white text-center">
+              <div className="flex gap-4 p-4  text-sm justify-around items-center w-full bg-white text-center">
                 <div className="flex gap-1 flex-col justify-center items-center ">
-                  <i className="bi bi-shield-check text-[#017BF9] text-3xl"></i>
-                  <span className=" text-sm font-semibold">Secure Payment</span>
+                  <i className="bi bi-shield-check text-[#017BF9] text-2xl"></i>
+                  <span className=" text-xs md:text-sm font-semibold">
+                    Secure Payment
+                  </span>
                 </div>
                 <div className="flex gap-1 items-cente flex-col justify-center items-center text-center">
-                  <i className="bi bi-truck text-[#017BF9] text-3xl"></i>
-                  <span className=" text-sm font-semibold">Fast Delivery</span>
+                  <i className="bi bi-truck text-[#017BF9] text-2xl"></i>
+                  <span className=" text-xs md:text-sm font-semibold">
+                    Fast Delivery
+                  </span>
                 </div>
                 <div className="flex gap-1 items-cente flex-col justify-center items-center text-center">
-                  <i className="bi bi-credit-card-2-front text-[#017BF9] text-3xl"></i>
-                  <span className=" text-sm font-semibold">Easy Payment</span>
+                  <i className="bi bi-credit-card-2-front text-[#017BF9] text-2xl"></i>
+                  <span className=" text-xs md:text-sm font-semibold">
+                    Easy Payment
+                  </span>
                 </div>
               </div>
 
               {/* buttons  */}
-              <div className="flex gap-2 font-[600]">
+              <div className="flex gap-2 font-[600] justify-center items-center">
                 <button className="bg-[#017BF9] shadow-lg  text-white p-3 px-6 text-lg rounded-md">
                   Shop Now <i className="bi bi-arrow-right"></i>
                 </button>
               </div>
-            </div>
-            <div className="">
-              <Image
-                className=""
-                src="/register.jpg"
-                width={500}
-                height={500}
-              ></Image>
             </div>
           </div>
           {/* //?content title */}

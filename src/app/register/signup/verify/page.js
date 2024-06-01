@@ -7,12 +7,15 @@ import { useRouter } from "next/navigation";
 export default function Verify() {
   const otpInputRef = useRef(null);
   const router = useRouter();
+  const [condition, setCondition] = useState(true);
 
   function checkOtp() {
     if (otpInputRef.current.value.length < 6) {
       toast.error("Invalid OTP");
       return;
     }
+
+    setCondition(true);
 
     toast.dismiss();
     toast.loading("Checking...");
@@ -32,17 +35,15 @@ export default function Verify() {
         toast.remove();
         if (data.success) {
           toast.success(data.message);
-          // redirectig user to  dashboard page
-          router.push("/dashboard");
-          // console.log(data);
+          window.location.href = "/dashboard";
         } else {
           toast.error(data.message);
-          console.log(data);
         }
       })
       .catch((err) => {
         console.log(err.message);
       });
+    setCondition(false);
   }
   return (
     <div className="flex flex-col items-center justify-center gap-3">
@@ -53,18 +54,28 @@ export default function Verify() {
       <div className="flex flex-col gap-2">
         <input
           ref={otpInputRef}
+          onInput={(e) => {
+            if (e.target.value.length > 5) {
+              setCondition(false);
+            } else {
+              setCondition(true);
+            }
+          }}
           type="number"
           placeholder="Enter OTP"
           className="border-[1px] shadow-sm border-gray-200 rounded-sm text-[15px] p-3  w-[200px]  md:w-[300px] outline-none font-medium "
         />
       </div>
       <button
-        className="bg-[#017BF9] shadow-lg text-white p-3 m-2 w-[150px] rounded-sm text-sm font-semibold active:scale-[.96] md:active:scale-100 md:hover:scale-[1.03] ease-in-out outline-none duration-50"
+        className={`${
+          condition ? "opacity-50" : "opacity-100"
+        } ${"bg-[#017BF9] shadow-lg text-white p-3 m-2 w-[150px] rounded-sm text-sm font-semibold active:scale-[.96] md:active:scale-100 md:hover:scale-[1.03] ease-in-out outline-none duration-50 "}`}
         onClick={checkOtp}
+        disabled={condition}
       >
         Verify
       </button>
-      {/* resend otp */}
+
       <span className="text-sm">
         <Link href="/register/resend">
           Resend OTP
@@ -75,15 +86,6 @@ export default function Verify() {
             {" "}
             Resend
           </span>
-          {/* resend  */}
-          {/* <span
-            className={`${
-              otpInterval != 0 ? "block" : "hidden"
-            }${"text-[#017BF9] font-semibold"}`}
-          >
-            {" in "}
-            {otpInterval}
-          </span> */}
         </Link>
       </span>
     </div>

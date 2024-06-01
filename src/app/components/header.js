@@ -74,24 +74,24 @@ export default function Header({ props }) {
       {/* //? Title */}
       <div className="flex justify-center items-center">
         <Link className={`${kufam.className} text-3xl`} href={"/dashboard"}>
-          Zestora
+          Uniika
         </Link>
       </div>
 
       {/* //? cart search */}
       <div>
-        <div className="flex gap-4 items-center">
-          <Link href="/dashboard/search" className="md:hidden">
-            <span className="bi bi-search text-xl md:text-[22px]  cursor-pointer"></span>
+        <div className="flex gap-4 md:gap-5 items-center">
+          <Link href="/dashboard/search" className="hidden">
+            <span className="bi bi-search text-[19px] md:text-[22px]  cursor-pointer"></span>
           </Link>
-          <div className="relative hidden md:flex  border-[1.3px] border-[#8B8BA3] justify-center items-center p-[6px] rounded-md px-4">
+          <div className="relative hidden sm:flex  border-[1.3px] border-[#8B8BA3] justify-center items-center p-[6px] rounded-md px-4">
             <span className="bi bi-search text-xl"></span>
             <input
               onFocus={() => setInput(true)}
               onBlur={() => setInput(false)}
               type="text"
               // blue color
-              className="] placeholder:text-[#8B8BA3]  px-3  outline-none w-[250px]  text-[#000000] text-[14px] font-medium"
+              className="] placeholder:text-[#8B8BA3]  px-3  outline-none w-[150px] md:w-[250px]  text-[#000000] text-[14px] font-medium"
               placeholder="Search Unique"
             />
 
@@ -99,15 +99,19 @@ export default function Header({ props }) {
             <div
               className={`${
                 input ? "flex" : "hidden"
-              } ${"absolute rounded-md z-10 p-2 m-2 w-full h-[200px] bg-white border-[1.2px] top-[100%]"}`}
+              } ${"absolute rounded-md z-10 p-2 m-2 w-full h-[150px] md:h-[200px] bg-white border-[1.2px] top-[100%]"}`}
             ></div>
           </div>
-          <Link href="/cart">
-            <span className="bi bi-heart-fill text-xl md:text-2xl cursor-pointer text-[#0086D0]"></span>
-            <i class=""></i>
+          <Link href="/cart" className="hidden sm:block">
+            <span className="bi bi-heart-fill text-xl md:text-[22px] cursor-pointer text-[#017BF9]"></span>
           </Link>
           <Link href="/cart">
             <span className="bi bi-cart3 text-xl md:text-2xl cursor-pointer"></span>
+          </Link>
+          {/* adding profile icon
+           */}
+          <Link href="/profile">
+            <span className="bi bi-person text-[24px] md:text-[27px] cursor-pointer"></span>
           </Link>
         </div>
       </div>

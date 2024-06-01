@@ -18,8 +18,7 @@ export async function POST(req) {
 
     // checking otp
     const isOtpValid = await bcrypt.compare(userData.otp, otp);
-    console.log(userData.otp, otp, isOtpValid);
-    // console.log(isOtpValid);
+
     if (!isOtpValid) {
       return NextResponse.json(
         { success: false, message: "Invalid OTP" },
@@ -28,9 +27,11 @@ export async function POST(req) {
     }
 
     if (!isRegistered) {
+      console.log("not registered");
       cookieStore.set("token", sign({ name, email, isRegistered: true }));
-
+      console.log("token set");
       const createdUser = await new User({ name, email }).save();
+      console.log("created user", createdUser);
       return NextResponse.json(
         { success: true, message: "Verified", data: createdUser },
         { status: 200 }

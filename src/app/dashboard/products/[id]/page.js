@@ -1,9 +1,10 @@
 "use client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
+import { usePathname } from "next/navigation";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Navigation, Thumbs, Pagination } from "swiper/modules";
@@ -14,24 +15,47 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
 import "swiper/css/free-mode";
+import Back from "@/app/profile/profile_components/button/back_btn";
 
 export default function Page({ params }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
 
   const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    let urlArray = pathname.split("/");
+    let productId = urlArray[urlArray.length - 1];
+
+    fetch(
+      `http://localhost:3000/api/fetch-products-details/detailed-product-data/${productId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId: productId,
+        }),
+      }
+    )
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <>
       <div className="absolute w-[100%] h-[100svh] p-2 left-0 top-0 bg-[#F9F9F9] z-[10] flex flex-col gap-4 md:flex-row overflow-auto items-center md:items-start md:justify-center">
         {/* section 1 */}
         <div className="flex flex-col gap-2 relative md:w-[50%] max-w-[500px]  w-[100%]">
-          {/* back button */}
-          <div
-            onClick={() => router.back()}
-            className="absolute left-0 top-0 p-2 cursor-pointer z-20"
-          >
-            <i className="bi bi-arrow-left text-2xl"></i>
-          </div>
+          <Back />
           <div className="relative">
             <Swiper
               thumbs={{

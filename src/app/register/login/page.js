@@ -4,11 +4,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useSession, signIn } from "next-auth/react";
 
 export default function Login() {
   const router = useRouter();
   const emailRef = useRef();
   const [btn, setBtn] = useState(false);
+
+  // adding and event for online and offline
+  useEffect(() => {
+    if (!navigator.onLine) {
+      toast.error("No internet connection");
+    } else {
+      toast.dismiss();
+    }
+    console.log("online", navigator.onLine);
+  }, [navigator.onLine]);
 
   async function login() {
     const email = emailRef.current.value;
@@ -22,6 +33,9 @@ export default function Login() {
     try {
       toast.dismiss();
       toast.loading("Loading...");
+
+      setBtn(false);
+
       const result = await fetch("/api/login", {
         method: "POST",
         headers: {
@@ -31,7 +45,8 @@ export default function Login() {
       });
       const response = await result.json();
       toast.remove();
-      console.log(response);
+      setBtn(true);
+      // console.log(response);
       if (response.success) {
         toast.success("OTP Sent");
         router.push("/register/signup/verify");
@@ -57,10 +72,7 @@ export default function Login() {
           />
           <div className="flex flex-col items-center justify-center gap-4 ">
             <div>
-              <h1 className="text-3xl font-semibold ">
-                {/* Register & Shop Heartily! */}
-                Login
-              </h1>
+              <h1 className="text-3xl font-semibold ">Login</h1>
               <br />
             </div>
             <div className="flex flex-col">
@@ -91,7 +103,10 @@ export default function Login() {
             </span>
 
             <div className="flex gap-2">
-              <button className="bg-[#] shadow-md text-[#616173] flex gap-2 justify-center items-center p-3 m-2  w-[135px] rounded-sm text-sm">
+              <button
+                className="bg-[#] shadow-md text-[#616173] flex gap-2 justify-center items-center p-3 m-2  w-[135px] rounded-sm text-sm"
+                onClick={() => signIn("google")}
+              >
                 <i class="bi bi-google text-[#017BF9]"></i>
                 Google
               </button>

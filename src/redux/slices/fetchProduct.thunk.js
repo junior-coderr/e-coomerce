@@ -13,7 +13,7 @@ export const fetchProducts = createAsyncThunk(
         body: JSON.stringify({ page }),
       });
 
-      console.log("pager", page);
+      // console.log("pager", page);
       const data = await response.json();
       return data.products; // Assuming data.products contains the products
     } catch (error) {
