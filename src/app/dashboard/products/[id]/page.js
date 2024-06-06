@@ -22,13 +22,14 @@ export default function Page({ params }) {
 
   const router = useRouter();
   const pathname = usePathname();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
   useEffect(() => {
     let urlArray = pathname.split("/");
     let productId = urlArray[urlArray.length - 1];
 
     fetch(
-      `http://localhost:3000/api/fetch-products-details/detailed-product-data/${productId}`,
+      `${baseUrl}/api/fetch-products-details/detailed-product-data/${productId}`,
       {
         method: "POST",
         headers: {

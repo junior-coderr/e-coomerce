@@ -1,7 +1,7 @@
 // import { resend } from "./resend";
 import ChangeEmail from "../../emails/change_email.jsx";
 import nodemailer from "nodemailer";
-import { renderEmail } from "react-html-email";
+import { render } from "@react-email/render";
 
 export const updateVerificationEmail = async (token, email) => {
   return new Promise(async (resolve, reject) => {
@@ -18,7 +18,8 @@ export const updateVerificationEmail = async (token, email) => {
         from: "pratikmishra1833@gmail.com",
         to: email,
         subject: "Test Email",
-        html: renderEmail(<ChangeEmail email={email} token={token} />),
+
+        html: render(<ChangeEmail email={email} token={token} />),
       };
       //
       const info = await transporter.sendMail(mailOptions);

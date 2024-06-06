@@ -6,7 +6,7 @@ export async function POST(req) {
   await dbConnect();
   // const data = JSON.parse(req.body);
   const { page, limit = 10 } = await req.json();
-  const skip = (page - 1) * limit;
+  const skip = page * limit;
 
   try {
     const res = await Product.find().skip(skip).limit(limit).exec();

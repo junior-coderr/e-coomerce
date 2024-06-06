@@ -16,12 +16,17 @@ async function Send_mail(email, router) {
       },
       body: JSON.stringify({ email }),
     });
-    const data = await d.json();
+    var data = await d.json();
   } catch (error) {
     toast.error("Something went wrong!");
   }
-  if (!data.success) {
-    toast.error(data.message);
+  if (data) {
+    if (!data.success) {
+      toast.error(data.message);
+      return;
+    }
+  } else {
+    toast.error("Something went wrong!");
     return;
   }
 

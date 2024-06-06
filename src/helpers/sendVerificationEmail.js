@@ -1,7 +1,6 @@
-// import { resend } from "./resend";
 import VerificationEmail from "../../emails/verficationEmail";
 import nodemailer from "nodemailer";
-import { renderEmail } from "react-html-email";
+import { render } from "@react-email/render";
 
 export const sendVerificationEmail = async (email, username, verifyCode) => {
   return new Promise(async (resolve, reject) => {
@@ -21,10 +20,10 @@ export const sendVerificationEmail = async (email, username, verifyCode) => {
         from: "pratikmishra1833@gmail.com",
         to: email,
         subject: "Test Email",
-        // html: `<h1>Hello ${username}, here is your verification code: ${verifyCode}</h1>`,
-        html: renderEmail(
+        html: render(
           <VerificationEmail username={username} otp={verifyCode} />
         ),
+        // html: `<h1>Hello ${username}, here is your verification code: ${verifyCode}</h1>`,
       };
 
       // return { success: true, message: "Verification email sent" };

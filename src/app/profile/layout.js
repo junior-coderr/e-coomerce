@@ -5,12 +5,10 @@ import axios from "axios";
 import { cookies } from "next/headers";
 
 async function getname() {
-  const res = await axios.post(
-    "http://localhost:3000/api/verified/get_profile",
-    {
-      token: cookies().get("token") ? cookies().get("token").value : "",
-    }
-  );
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const res = await axios.post(`${baseUrl}/api/verified/get_profile`, {
+    token: cookies().get("token") ? cookies().get("token").value : "",
+  });
 
   console.log("res", res.data);
   return res.data.data.name;

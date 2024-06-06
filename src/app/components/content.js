@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { Prompt } from "next/font/google";
-import { useEffect, useState, useRef, use } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchProducts } from "../../redux/slices/fetchProduct.thunk";
@@ -83,7 +83,7 @@ export default function AnimatedListComponent() {
               ></Image>
             </div>
             <div className="p- flex flex-col gap-y-6">
-              <div className="text-5xl font-[800] text-[#05386a] ">
+              <div className="text-5xl font-[700] text-[#05386a] ">
                 <span className="relative">
                   Shop{" "}
                   <span className="w-full h-[30%] bg-[#017df931] absolute left-0 bottom-1 rotate-2"></span>
@@ -146,15 +146,7 @@ export default function AnimatedListComponent() {
           className="loader relative py-5 flex justify-center items-center"
           ref={loader}
         >
-          <div id="load">
-            <div>-</div>
-            <div>-</div>
-            <div>-</div>
-            <div>-</div>
-            <div>-</div>
-            <div>-</div>
-            <div>-</div>
-          </div>
+          <div id="load"></div>
         </div>
       </div>
       {/* </div> */}
@@ -163,7 +155,7 @@ export default function AnimatedListComponent() {
 }
 
 function Content({ product }) {
-  const { ref, inView } = useInView({
+  var { ref, inView } = useInView({
     triggerOnce: true, // Only trigger once when element comes into view
     threshold: 0.2, // Trigger animation when 50% of the element is in view
   });
@@ -295,13 +287,13 @@ function Content({ product }) {
       data-liked={product.liked}
     >
       <motion.div
-        initial={{ scale: 0.5, opacity: 0 }} // Initial state: scaled down and invisible
+        initial={{ scale: 0.85, opacity: 0 }} // Initial state: scaled down and invisible
         animate={inView ? { scale: 1, opacity: 1 } : {}} // Animate to full size and visible when in view
         transition={{
           type: "spring",
           stiffness: 300,
-          damping: 20,
-          duration: 0.5,
+          damping: 35,
+          duration: 0.01,
         }} // Spring animation
         className="rounded-md  flex flex-col justify-center gap-2 items-center cursor-pointer"
       >
@@ -327,7 +319,7 @@ function Content({ product }) {
           </span>
         </div>
       </motion.div>
-      <i className="bi-heart heart" onClick={operateLike}></i>
+      {/* <i className="bi-heart heart"></i> */}
     </Link>
   );
 }

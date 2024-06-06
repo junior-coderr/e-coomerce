@@ -1,98 +1,94 @@
-// import {
-//     Html,
-//     Head,
-//     Font,
-//     Preview,
-//     Heading,
-//     Row,
-//     Section,
-//     Text,
-//     Button,
-//     Link,
-//   } from '@react-email/components';
-
-  
-//   export default function VerificationEmail({ username, otp }) {
-//     return (
-//       <Html lang="en" dir="ltr">
-//         <Head>
-//           <title>Verification Code</title>
-//           <Font
-//             fontFamily="Roboto"
-//             fallbackFontFamily="Verdana"
-//             webFont={{
-//               url: 'https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4mxKKTU1Kg.woff2',
-//               format: 'woff2',
-//             }}
-//             fontWeight={400}
-//             fontStyle="normal"
-//           />
-//         </Head>
-//         <Preview>Here&apos;s your verification code: {otp}</Preview>
-//         <Section>
-//           <Row>
-//             <Heading as="h2">Hello {username},</Heading>
-//           </Row>
-//           <Row>
-//             <Text>
-//               Thank you for registering. Please use the following verification
-//               code to complete your registration:
-//             </Text>
-//           </Row>
-//           <Row>
-//             <Text>{otp}</Text> 
-//           </Row>
-//           <Row>
-//             <Text>
-//               If you did not request this code, please ignore this email.
-//             </Text>
-//           </Row>
-//           <Row>
-//             <Text>
-//               To verify your email address, please click the link below:
-//             </Text>
-//             <Button
-//               href={`http://localhost:3000/dashboard`}
-//               style={{ color: '#61dafb' }}
-//             >
-//               Verify here
-//             </Button>
-//           </Row>
-//         </Section>
-//       </Html>
-//     );
-//   }
-
-
-
+// components/ChangeEmail.js
 import React from 'react';
-import { Email, Item, A, Box, Image, Span, renderEmail } from 'react-html-email';
+import { Html, Head, Body, Container, Text, Link } from '@react-email/components';
 
-export default function ChangeEmail({email,token}){
-  return (
-    <Email title="OTP Verification">
-      <Item align="center">
-        <Span fontSize={20}>Uniika</Span>
-      </Item>
-      <Item>
-        <Box>
-          <Item>
-            <Span fontSize={15}>Dear {email},</Span>
-          </Item>
-          <Item>
-            <Span fontSize={15}>
-              Please click the button below to update your email address, to new email address '{email}'
-            </Span>
-          </Item>
-          <Item align="center">
-            <A href={`http://localhost:3000/verified/logout/${token}`}>
-              <Box cellSpacing={20} bgcolor="#4CAF50" style={{ borderRadius: '5px', color: 'white', padding: '5px' }}>
-                Verify Account
-              </Box>
-            </A>
-          </Item>
-        </Box>
-      </Item>
-    </Email>
-  );
+const ChangeEmail = ({ email, token }) => (
+  <Html>
+    <Head />
+    <Body style={main}>
+      <Container style={container}>
+        <table width="100%" cellPadding="0" cellSpacing="0" border="0">
+          <tr>
+            <td align="center">
+              <Text style={header}>Uniika</Text>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table width="100%" cellPadding="0" cellSpacing="0" border="0">
+                <tr>
+                  <td>
+                    <Text style={paragraph}>Dear {email},</Text>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <Text style={paragraph}>
+                      Please click the button below to update your email address to new email address '{email}'
+                    </Text>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center">
+                    <Link href={`http://localhost:3000/verified/logout/${token}`} style={button}>
+                      <table cellSpacing="20" bgcolor="#4CAF50">
+                        <tr>
+                          <td align="center">
+                            <Text style={buttonText}>Verify Account</Text>
+                          </td>
+                        </tr>
+                      </table>
+                    </Link>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </Container>
+    </Body>
+  </Html>
+);
+
+const main = {
+  backgroundColor: '#f6f6f6',
+  fontFamily: 'Arial, sans-serif',
 };
+
+const container = {
+  backgroundColor: '#ffffff',
+  margin: '0 auto',
+  padding: '20px',
+  borderRadius: '5px',
+  boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+  width: '80%',
+  maxWidth: '600px',
+};
+
+const header = {
+  fontSize: '20px',
+  fontWeight: 'bold',
+  marginBottom: '20px',
+};
+
+const paragraph = {
+  fontSize: '15px',
+  margin: '10px 0',
+};
+
+const button = {
+  textDecoration: 'none',
+  display: 'inline-block',
+  padding: '10px 20px',
+  backgroundColor: '#4CAF50',
+  color: '#ffffff',
+  borderRadius: '5px',
+  marginTop: '20px',
+};
+
+const buttonText = {
+  color: '#ffffff',
+  fontWeight: 'bold',
+};
+
+export default ChangeEmail;

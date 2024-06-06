@@ -73,7 +73,7 @@ export default function Header({ props }) {
 
       {/* //? Title */}
       <div className="flex justify-center items-center">
-        <Link className={`${kufam.className} text-3xl`} href={"/dashboard"}>
+        <Link className={`${""} font-[700]  text-3xl`} href={"/dashboard"}>
           Uniika
         </Link>
       </div>

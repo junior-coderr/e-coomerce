@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 export default function Logout({ params }) {
   const router = useRouter();
+  console.log("params", params);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     fetch(`/api/verify_update_email/${params.id}`)
