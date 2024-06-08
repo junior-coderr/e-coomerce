@@ -1,10 +1,8 @@
 "use client";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
-import { usePathname } from "next/navigation";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Navigation, Thumbs, Pagination } from "swiper/modules";
@@ -19,37 +17,70 @@ import Back from "@/app/profile/profile_components/button/back_btn";
 
 export default function Page({ params }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
-
-  const router = useRouter();
-  const pathname = usePathname();
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const [productData, setProductData] = useState(null);
+  const [width, setWidth] = useState(0);
+  const [data, setData] = useState({});
+  const [listActive, setListActive] = useState(false);
+  const [quantity, setQuantity] = useState("");
+  const sizeRef = useRef(null);
 
   useEffect(() => {
-    let urlArray = pathname.split("/");
-    let productId = urlArray[urlArray.length - 1];
+    console.log("data", data);
+    if (data.quantity < 4) {
+      setQuantity("");
+    }
+  }, [data]);
 
-    fetch(
-      `${baseUrl}/api/fetch-products-details/detailed-product-data/${productId}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          productId: productId,
-        }),
-      }
-    )
+  useEffect(() => {
+    setWidth(window.innerWidth);
+    window.addEventListener("resize", () => {
+      setWidth(window.innerWidth);
+    });
+
+    fetch(`/api/fetch-products-details/detailed-product-data/${params.id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        productId: params.id,
+      }),
+    })
       .then((res) => {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
+        setProductData(data.data);
+        setData({ size: data.data.sizes[0], quantity: 1 });
+
+        setTimeout(() => {
+          document.getElementsByClassName("quantity1")[0].checked = true;
+          document.getElementsByClassName("size0")[0].checked = true;
+        }, 300);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
+
+  const zoomMove = (e, image) => {
+    const elem = e.target;
+    elem.style.display = "block";
+    elem.style.backgroundImage = `url(${image})`;
+    const x = e.nativeEvent.offsetX;
+    const y = e.nativeEvent.offsetY;
+    const width = elem.offsetWidth;
+    const height = elem.offsetHeight;
+    const xPercent = (x / width) * 100;
+    const yPercent = (y / height) * 100;
+    elem.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+  };
+
+  const zoomDone = (e) => {
+    const elem = e.target;
+    elem.style.backgroundImage = ``;
+    elem.style.backgroundPosition = "50% 50%";
+  };
 
   return (
     <>
@@ -69,109 +100,32 @@ export default function Page({ params }) {
               modules={[FreeMode, Thumbs, Navigation, Pagination]}
               className="mySwiper"
             >
-              <SwiperSlide key={1}>
-                <Zoom>
-                  <Image
-                    className="rounded-md border-[1px] border-[#EAEAF1] select-none"
-                    src={
-                      "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp"
-                    }
-                    width={500}
-                    height={500}
-                    alt="Picture of the watch"
-                  />
-                </Zoom>
-              </SwiperSlide>
-              <SwiperSlide key={2}>
-                <div>
-                  <Zoom>
-                    <Image
-                      className="rounded-md border-[1px] border-[#EAEAF1] select-none"
-                      src={
-                        "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp"
-                      }
-                      width={500}
-                      height={500}
-                      alt="Picture of the watch"
-                    />
-                  </Zoom>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide key={3}>
-                <div>
-                  <Zoom>
-                    <Image
-                      className="rounded-md border-[1px] border-[#EAEAF1] select-none"
-                      src={
-                        "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp"
-                      }
-                      width={500}
-                      height={500}
-                      alt="Picture of the watch"
-                    />
-                  </Zoom>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide key={4}>
-                <div>
-                  <Zoom>
-                    <Image
-                      className="rounded-md border-[1px] border-[#EAEAF1] select-none"
-                      src={
-                        "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp"
-                      }
-                      width={500}
-                      height={500}
-                      alt="Picture of the watch"
-                    />
-                  </Zoom>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide key={5}>
-                <div>
-                  <Zoom>
-                    <Image
-                      className="rounded-md border-[1px] border-[#EAEAF1] select-none"
-                      src={
-                        "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp"
-                      }
-                      width={500}
-                      height={500}
-                      alt="Picture of the watch"
-                    />
-                  </Zoom>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide key={6}>
-                <div>
-                  <Zoom>
-                    <Image
-                      className="rounded-md border-[1px] border-[#EAEAF1] select-none"
-                      src={
-                        "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp"
-                      }
-                      width={500}
-                      height={500}
-                      alt="Picture of the watch"
-                    />
-                  </Zoom>
-                </div>
-              </SwiperSlide>
-              <SwiperSlide key={7}>
-                <div>
-                  <Zoom>
-                    <Image
-                      className="rounded-md border-[1px] border-[#EAEAF1] select-none"
-                      src={
-                        "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp"
-                      }
-                      width={500}
-                      height={500}
-                      alt="Picture of the watch"
-                    />
-                  </Zoom>
-                </div>
-              </SwiperSlide>
+              {productData
+                ? productData.product_images.map((image, index) => (
+                    <SwiperSlide key={index}>
+                      <Zoom>
+                        {width > 850 && (
+                          <div
+                            className="w-full cursor-zoom-in h-full absolute top-0 left-0 bg-cover"
+                            style={{
+                              backgroundSize: "200%",
+                              backgroundPosition: "50% 50%",
+                            }}
+                            onMouseMove={(e) => zoomMove(e, image)}
+                            onMouseLeave={zoomDone}
+                          ></div>
+                        )}
+                        <Image
+                          className="rounded-md border-[1px] border-[#EAEAF1] select-none"
+                          src={image}
+                          width={500}
+                          height={500}
+                          alt="Picture of the watch"
+                        />
+                      </Zoom>
+                    </SwiperSlide>
+                  ))
+                : null}
             </Swiper>
           </div>
 
@@ -179,114 +133,26 @@ export default function Page({ params }) {
             <div>
               <Swiper
                 onSwiper={setThumbsSwiper}
-                // loop={true}
                 modules={[FreeMode, Thumbs, Navigation]}
                 spaceBetween={8}
                 slidesPerView={4}
                 freeMode={true}
-                watchSlidesVisibility={true}
+                // watchSlidesVisibility={true}
                 watchSlidesProgress={true}
               >
-                <SwiperSlide key={1}>
-                  <div>
-                    <Image
-                      // blue color
-                      className="rounded-md border-[1px] border-[#EAEAF1"
-                      src={
-                        "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp"
-                      }
-                      width={100}
-                      height={100}
-                      alt="Picture of the watch"
-                    />
-                  </div>
-                </SwiperSlide>
-
-                <SwiperSlide key={2}>
-                  <div>
-                    <Image
-                      // blue color
-                      className="rounded-md border-[1px] border-[#EAEAF1"
-                      src={
-                        "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp"
-                      }
-                      width={100}
-                      height={100}
-                      alt="Picture of the watch"
-                    />
-                  </div>
-                </SwiperSlide>
-
-                <SwiperSlide key={3}>
-                  <div>
-                    <Image
-                      // blue color
-                      className="rounded-md border-[1px] border-[#EAEAF1"
-                      src={
-                        "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp"
-                      }
-                      width={100}
-                      height={100}
-                      alt="Picture of the watch"
-                    />
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide key={4}>
-                  <div>
-                    <Image
-                      // blue color
-                      className="rounded-md border-[1px] border-[#EAEAF1"
-                      src={
-                        "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp"
-                      }
-                      width={100}
-                      height={100}
-                      alt="Picture of the watch"
-                    />
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide key={5}>
-                  <div>
-                    <Image
-                      // blue color
-                      className="rounded-md border-[1px] border-[#EAEAF1"
-                      src={
-                        "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp"
-                      }
-                      width={100}
-                      height={100}
-                      alt="Picture of the watch"
-                    />
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide key={6}>
-                  <div>
-                    <Image
-                      // blue color
-                      className="rounded-md border-[1px] border-[#EAEAF1"
-                      src={
-                        "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp"
-                      }
-                      width={100}
-                      height={100}
-                      alt="Picture of the watch"
-                    />
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide key={7}>
-                  <div>
-                    <Image
-                      // blue color
-                      className="rounded-md border-[1px] border-[#EAEAF1"
-                      src={
-                        "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg.webp"
-                      }
-                      width={100}
-                      height={100}
-                      alt="Picture of the watch"
-                    />
-                  </div>
-                </SwiperSlide>
+                {productData
+                  ? productData.product_images.map((image, index) => (
+                      <SwiperSlide key={index}>
+                        <Image
+                          className="rounded-md cursor-pointer border-[1px] border-[#EAEAF1] select-none "
+                          src={image}
+                          width={100}
+                          height={100}
+                          alt="Picture of the watch"
+                        />
+                      </SwiperSlide>
+                    ))
+                  : null}
               </Swiper>
             </div>
           </div>
@@ -295,18 +161,21 @@ export default function Page({ params }) {
         {/* section 2 */}
         <div className="w-[100%] md:w-[50%] flex flex-col gap-4 ">
           {/* name and price rating  */}
-          <div className="border-[1.5px] border-[#EAEAF1] p-4 rounded-lg text-[#8B8BA3] flex flex-col gap-3 relative">
+          <div className="border-[1.5px] border-[#EAEAF1] p-4 rounded-lg text-[#606060] flex flex-col gap-3 relative">
             <h1 className="text-xl font-semibold">
-              Product 1 Lorem ipsum dolor sit amet consectetur, adipisicing
+              {productData ? productData.product_name : null}
             </h1>
             {/* rating  */}
             <div>
               <span className="inline gap-2 bg-theme text-white p-1 font-semibold rounded">
-                4.1 <i className="bi bi-star-fill text-[white]"></i>
+                {productData ? productData.product_rating : null}{" "}
+                <i className="bi bi-star-fill text-[white]"></i>
               </span>
             </div>
 
-            <h1 className="text-4xl font-medium text-[#353543]">$21</h1>
+            <h1 className="text-4xl font-medium text-[#353543]">
+              ${productData ? productData.product_price : null}
+            </h1>
 
             {/* free delivery  */}
             <div className="absolute p-3 text-[#0000009a] right-0 select-none bottom-0">
@@ -317,24 +186,270 @@ export default function Page({ params }) {
           </div>
 
           {/* size, color,  */}
-          <div className="border-[1.5px] border-[#EAEAF1] p-4 rounded-lg ">
-            <h1 className="text-lg font-semibold text-[#50505C] ">Size</h1>
-            <div className="flex gap-2">
-              <div className="bg-[#F9F9F9] p-2 rounded-md">S</div>
-              <div className="bg-[#F9F9F9] p-2 rounded-md">M</div>
-              <div className="bg-[#F9F9F9] p-2 rounded-md">L</div>
-              <div className="bg-[#F9F9F9] p-2 rounded-md">XL</div>
+          {productData && productData.sizes.length > 0 ? (
+            <div className="border-[1.5px] border-[#EAEAF1] p-4 rounded-lg ">
+              <h1 className="text-lg font-semibold text-[#50505C] ">Size</h1>
+              <div className="flex gap-2">
+                {productData.sizes.map((size, index) => (
+                  <div key={index}>
+                    <input
+                      type="radio"
+                      id={index}
+                      ref={sizeRef}
+                      className={`size${index}`}
+                      name="size"
+                      value={size}
+                      onChange={(e) => {
+                        setData({ ...data, size: e.target.value });
+                      }}
+                    />
+                    <label
+                      key={index}
+                      htmlFor={index}
+                      className="bg-[#F9F9F9] select-none p-2 rounded-md hover:text-[#017BF9] hover:cursor-pointer"
+                      data-size={size}
+                    >
+                      {size}
+                    </label>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          ) : (
+            ""
+          )}
 
           {/* selecting quantity  */}
           <div className="border-[1.5px] border-[#EAEAF1] p-4 rounded-lg ">
             <h1 className="text-lg font-semibold text-[#50505C] ">Quantity</h1>
             <div className="flex gap-2">
-              <div className="bg-[#F9F9F9] p-2 rounded-md">1</div>
-              <div className="bg-[#F9F9F9] p-2 rounded-md">2</div>
-              <div className="bg-[#F9F9F9] p-2 rounded-md">3</div>
-              <div className="bg-[#F9F9F9] p-2 rounded-md">4</div>
+              <div>
+                <input
+                  type="radio"
+                  id={"quantity1"}
+                  name="quantity"
+                  className="quantity1"
+                  value={1}
+                  onChange={(e) => {
+                    setData({ ...data, quantity: e.target.value });
+                  }}
+                />
+                <label
+                  htmlFor={"quantity1"}
+                  className="bg-[#F9F9F9] select-none p-2 rounded-md hover:text-[#017BF9] hover:cursor-pointer"
+                >
+                  {1}
+                </label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  id={"quantity2"}
+                  name="quantity"
+                  value={2}
+                  onChange={(e) => {
+                    setData({ ...data, quantity: e.target.value });
+                  }}
+                />
+                <label
+                  htmlFor={"quantity2"}
+                  className="bg-[#F9F9F9] select-none p-2 rounded-md hover:text-[#017BF9] hover:cursor-pointer"
+                >
+                  {2}
+                </label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  id={"quantity3"}
+                  name="quantity"
+                  value={3}
+                  onChange={(e) => {
+                    setData({ ...data, quantity: e.target.value });
+                  }}
+                />
+                <label
+                  htmlFor={"quantity3"}
+                  className="bg-[#F9F9F9] select-none p-2 rounded-md hover:text-[#017BF9] hover:cursor-pointer"
+                >
+                  {3}
+                </label>
+              </div>
+            </div>
+
+            {/* section2  */}
+            <div className="relative w-12">
+              <input
+                className="w-12 text-center border-[1px] outline-none rounded-sm border-[#767676]"
+                placeholder="Qty"
+                name="quantity"
+                value={quantity}
+                onFocus={(e) => {
+                  setListActive(true);
+                  console.log("active");
+                }}
+                onBlur={(e) => {
+                  setTimeout(() => {
+                    setListActive(false);
+                  }, 200);
+                }}
+              />
+              {listActive ? (
+                <div className="absolute w-full h-[80px]  overflow-scroll bg-[#F2F2F2] flex flex-col items-center shrink-0">
+                  <div className="w-full text-center">
+                    <input
+                      type="radio"
+                      id={"quantity4"}
+                      name="quantity"
+                      className="hidden"
+                      value={4}
+                      onChange={(e) => {
+                        setData({ ...data, quantity: e.target.value });
+                      }}
+                    />
+                    <label
+                      htmlFor={"quantity4"}
+                      className=" block  min-w-full select-none hover:text-[#017BF9] hover:cursor-pointer"
+                      value={4}
+                      onClick={(e) => {
+                        setQuantity(e.target.innerText);
+                      }}
+                    >
+                      {4}
+                    </label>
+                  </div>
+                  <div className="w-full text-center">
+                    <input
+                      type="radio"
+                      id={"quantity5"}
+                      name="quantity"
+                      className="hidden"
+                      value={5}
+                      onChange={(e) => {
+                        setData({ ...data, quantity: e.target.value });
+                      }}
+                    />
+                    <label
+                      htmlFor={"quantity5"}
+                      className=" block  min-w-full select-none hover:text-[#017BF9] hover:cursor-pointer"
+                      onClick={(e) => {
+                        setQuantity(e.target.innerText);
+                      }}
+                    >
+                      {5}
+                    </label>
+                  </div>
+                  <div className="w-full text-center">
+                    <input
+                      type="radio"
+                      id={"quantity6"}
+                      name="quantity"
+                      className="hidden"
+                      value={6}
+                      onChange={(e) => {
+                        setData({ ...data, quantity: e.target.value });
+                      }}
+                    />
+                    <label
+                      htmlFor={"quantity6"}
+                      className=" block  min-w-full select-none hover:text-[#017BF9] hover:cursor-pointer"
+                      onClick={(e) => {
+                        setQuantity(e.target.innerText);
+                      }}
+                    >
+                      {6}
+                    </label>
+                  </div>
+                  <div className="w-full text-center">
+                    <input
+                      type="radio"
+                      id={"quantity7"}
+                      name="quantity"
+                      className="hidden"
+                      value={7}
+                      onChange={(e) => {
+                        setData({ ...data, quantity: e.target.value });
+                      }}
+                    />
+                    <label
+                      htmlFor={"quantity7"}
+                      className=" block  min-w-full select-none hover:text-[#017BF9] hover:cursor-pointer"
+                      onClick={(e) => {
+                        // console.log("quantity", e.target.text);
+                        setQuantity(e.target.innerText);
+                      }}
+                    >
+                      {7}
+                    </label>
+                  </div>
+                  <div className="w-full text-center">
+                    <input
+                      type="radio"
+                      id={"quantity8"}
+                      name="quantity"
+                      className="hidden"
+                      value={8}
+                      onChange={(e) => {
+                        setData({ ...data, quantity: e.target.value });
+                      }}
+                    />
+                    <label
+                      htmlFor={"quantity8"}
+                      className=" block  min-w-full select-none hover:text-[#017BF9] hover:cursor-pointer"
+                      onClick={(e) => {
+                        // console.log("quantity", e.target.text);
+                        setQuantity(e.target.innerText);
+                      }}
+                    >
+                      {8}
+                    </label>
+                  </div>
+                  <div className="w-full text-center">
+                    <input
+                      type="radio"
+                      id={"quantity9"}
+                      name="quantity"
+                      className="hidden"
+                      value={9}
+                      onChange={(e) => {
+                        setData({ ...data, quantity: e.target.value });
+                      }}
+                    />
+                    <label
+                      htmlFor={"quantity9"}
+                      className=" block  min-w-full select-none hover:text-[#017BF9] hover:cursor-pointer"
+                      onClick={(e) => {
+                        // console.log("quantity", e.target.text);
+                        setQuantity(e.target.innerText);
+                      }}
+                    >
+                      {9}
+                    </label>
+                  </div>
+                  <div className="w-full text-center">
+                    <input
+                      type="radio"
+                      id={"quantity10"}
+                      name="quantity"
+                      className="hidden"
+                      value={10}
+                      onChange={(e) => {
+                        setData({ ...data, quantity: e.target.value });
+                      }}
+                    />
+                    <label
+                      htmlFor={"quantity10"}
+                      className=" block  min-w-full select-none hover:text-[#017BF9] hover:cursor-pointer"
+                      onClick={(e) => {
+                        // console.log("quantity", e.target.text);
+                        setQuantity(e.target.innerText);
+                      }}
+                    >
+                      {10}
+                    </label>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
           {/* buy and cart and other options */}

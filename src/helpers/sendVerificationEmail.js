@@ -9,7 +9,7 @@ export const sendVerificationEmail = async (email, username, verifyCode) => {
         service: "Gmail",
         auth: {
           user: "pratikmishra1833@gmail.com",
-          pass: "bdmp knzo cqyl popv",
+          pass: process.env.GMAIL_PASS,
         },
       });
       // const html = ReactDOMServer.renderToStaticMarkup(

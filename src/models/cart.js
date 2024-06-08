@@ -25,6 +25,20 @@ const cart_schema = mongoose.Schema(
     size: {
       type: String,
     },
+    specifics: [
+      {
+        color: {
+          type: Boolean,
+          required: false,
+          default: false,
+        },
+        size: {
+          type: Boolean,
+          required: false,
+          default: false,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

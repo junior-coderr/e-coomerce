@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const Product_all = mongoose.Schema(
   {
@@ -33,20 +34,36 @@ const Product_all = mongoose.Schema(
     additional_info: {
       type: Array,
     },
-    product_colors: {
+    colors: {
       type: Array,
     },
-    product_sizes: {
+    sizes: {
       type: Array,
     },
-    liked: {
-      type: Boolean,
-      required: true,
-    },
-    specifications: [
+    specifics: [
       {
-        type: Boolean,
-        required: true,
+        color: {
+          type: Boolean,
+          required: false,
+          default: false,
+        },
+        size: {
+          type: Boolean,
+          required: false,
+          default: false,
+        },
+      },
+    ],
+    colorInfo: [
+      {
+        color: {
+          type: String,
+          required: false,
+        },
+        color_image: {
+          type: Array,
+          required: false,
+        },
       },
     ],
   },

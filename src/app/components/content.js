@@ -58,9 +58,9 @@ export default function AnimatedListComponent() {
     setFetchLoading(false);
   }, [products]);
 
-  useEffect(() => {
-    console.log("fetchLoading", fetchLoading);
-  }, [fetchLoading]);
+  // useEffect(() => {
+  //   // console.log("fetchLoading", fetchLoading);
+  // }, [fetchLoading]);
 
   return (
     <>
@@ -168,112 +168,112 @@ function Content({ product }) {
 
   const pathname = usePathname();
 
-  async function operateLike(e) {
-    e.preventDefault();
+  // async function operateLike(e) {
+  //   e.preventDefault();
 
-    try {
-      let host = e.currentTarget.parentElement;
-      const id = host.id.split("-")[1];
-      let element = e.currentTarget;
+  //   try {
+  //     let host = e.currentTarget.parentElement;
+  //     const id = host.id.split("-")[1];
+  //     let element = e.currentTarget;
 
-      toast.dismiss();
+  //     toast.dismiss();
 
-      toast.loading("Saving...");
+  //     toast.loading("Saving...");
 
-      const jsonData = await fetch(`/api/verified/save-product/like`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ productId: id }),
-      });
+  //     const jsonData = await fetch(`/api/verified/save-product/like`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ productId: id }),
+  //     });
 
-      const data = await jsonData.json();
-      if (data.success) {
-        console.log("data", data);
-        if (data.exist) {
-          toast.dismiss();
-          toast.success("Removed");
-        } else {
-          toast.dismiss();
-          toast.success("Saved!");
-        }
-        setTimeout(() => {
-          NProgress.done();
-        }, 100);
-      } else {
-        setTimeout(() => {
-          NProgress.done();
-        }, 100);
+  //     const data = await jsonData.json();
+  //     if (data.success) {
+  //       console.log("data", data);
+  //       if (data.exist) {
+  //         toast.dismiss();
+  //         toast.success("Removed");
+  //       } else {
+  //         toast.dismiss();
+  //         toast.success("Saved!");
+  //       }
+  //       setTimeout(() => {
+  //         NProgress.done();
+  //       }, 100);
+  //     } else {
+  //       setTimeout(() => {
+  //         NProgress.done();
+  //       }, 100);
 
-        toast.dismiss();
-        toast.error("Failed to save!");
-        return;
-      }
+  //       toast.dismiss();
+  //       toast.error("Failed to save!");
+  //       return;
+  //     }
 
-      if (element.dataset.liked === "true") {
-        element.classList.remove("bi-heart-fill");
-        element.classList.add("bi-heart");
-        element.style.color = "#0086D0";
+  //     if (element.dataset.liked === "true") {
+  //       element.classList.remove("bi-heart-fill");
+  //       element.classList.add("bi-heart");
+  //       element.style.color = "#0086D0";
 
-        element.dataset.liked = "false";
-      } else {
-        element.classList.remove("bi-heart");
-        element.classList.add("bi-heart-fill");
-        element.style.color = "#0086D0";
+  //       element.dataset.liked = "false";
+  //     } else {
+  //       element.classList.remove("bi-heart");
+  //       element.classList.add("bi-heart-fill");
+  //       element.style.color = "#0086D0";
 
-        element.dataset.liked = "true";
-      }
-    } catch (error) {
-      toast.dismiss();
-      setTimeout(() => {
-        NProgress.done();
-      }, 100);
-      toast.error("Failed to save!");
-    }
-  }
+  //       element.dataset.liked = "true";
+  //     }
+  //   } catch (error) {
+  //     toast.dismiss();
+  //     setTimeout(() => {
+  //       NProgress.done();
+  //     }, 100);
+  //     toast.error("Failed to save!");
+  //   }
+  // }
 
-  function mouseHover(e) {
-    e.preventDefault();
+  // function mouseHover(e) {
+  //   e.preventDefault();
 
-    const element = document.createElement("i");
-    const host = e.currentTarget;
+  // const element = document.createElement("i");
+  // const host = e.currentTarget;
 
-    // Like clicked
-    element.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (host.dataset.liked === "true") {
-        element.classList.remove("bi-heart-fill");
-        element.classList.add("bi-heart");
-        element.style.color = "#017BF9";
+  // Like clicked
+  // element.addEventListener("click", (e) => {
+  //   e.preventDefault();
+  //   if (host.dataset.liked === "true") {
+  //     element.classList.remove("bi-heart-fill");
+  //     element.classList.add("bi-heart");
+  //     element.style.color = "#017BF9";
 
-        host.dataset.liked = "false";
-      } else {
-        element.classList.remove("bi-heart");
-        element.classList.add("bi-heart-fill");
-        element.style.color = "#017BF9";
+  //     host.dataset.liked = "false";
+  //   } else {
+  //     element.classList.remove("bi-heart");
+  //     element.classList.add("bi-heart-fill");
+  //     element.style.color = "#017BF9";
 
-        host.dataset.liked = "true";
-      }
-    });
+  //     host.dataset.liked = "true";
+  //   }
+  // });
 
-    element.classList.add("bi");
+  // element.classList.add("bi");
 
-    if (host.dataset.liked === "true") {
-      element.classList.add("bi-heart-fill");
-    } else {
-      element.classList.add("bi-heart");
-    }
+  //   if (host.dataset.liked === "true") {
+  //     element.classList.add("bi-heart-fill");
+  //   } else {
+  //     element.classList.add("bi-heart");
+  //   }
 
-    element.classList.add("heart");
-    element.classList.add("shadow-xl");
-    e.currentTarget.appendChild(element);
-  }
+  //   element.classList.add("heart");
+  //   element.classList.add("shadow-xl");
+  //   e.currentTarget.appendChild(element);
+  // }
 
-  function mouseLeave(e) {
-    e.preventDefault();
-    e.currentTarget.removeChild(e.currentTarget.lastChild);
-  }
+  // function mouseLeave(e) {
+  //   e.preventDefault();
+  //   e.currentTarget.removeChild(e.currentTarget.lastChild);
+  // }
 
   return (
     <Link
@@ -284,7 +284,7 @@ function Content({ product }) {
       id={`product-${product._id}`}
       // key={index}
       className="relative md:hover:shadow-lg md: hover:z-[3]  md:hover:scale-105 md:hover:mt-[-30px] duration-100 ease-in-out rounded-md"
-      data-liked={product.liked}
+      // data-liked={product.liked}
     >
       <motion.div
         initial={{ scale: 0.85, opacity: 0 }} // Initial state: scaled down and invisible
@@ -300,7 +300,7 @@ function Content({ product }) {
         <div className="relative overflow-hidden">
           <Image
             className="rounded-md bg-[#ac4040] hover:scale-110 transition duration-500 ease-in-out"
-            src={product.product_image}
+            src={product.product_images[0]}
             width={500}
             height={500}
             alt="Picture of the watch"

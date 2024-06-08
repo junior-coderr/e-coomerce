@@ -5,9 +5,9 @@ export default function Back() {
   const router = useRouter();
 
   return (
-    <div>
+    <div className="absolute z-10">
       <div
-        className=" flex w-fit px-2 p-1 text-[12px]  shadow-lg rounded-full bg-[white] justify-center items-center cursor-pointer"
+        className=" flex w-fit relative px-2 p-1 text-[12px] transition-all  hover:shadow-lg rounded-full hover:bg-[white] justify-center items-center cursor-pointer"
         onClick={() => router.push("/dashboard")}
       >
         <i className="bi bi-arrow-left text-2xl  font-bold"></i>
