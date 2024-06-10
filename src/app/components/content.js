@@ -300,7 +300,7 @@ function Content({ product }) {
         <div className="relative overflow-hidden">
           <Image
             className="rounded-md bg-[#ac4040] hover:scale-110 transition duration-500 ease-in-out"
-            src={product.product_images[0]}
+            src={product.colorInfo[0].color_image[0]}
             width={500}
             height={500}
             alt="Picture of the watch"

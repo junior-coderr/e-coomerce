@@ -15,10 +15,6 @@ const Product_all = mongoose.Schema(
       type: String,
       required: true,
     },
-    product_images: {
-      type: Array,
-      required: true,
-    },
     product_category: {
       type: String,
       required: true,
@@ -32,9 +28,6 @@ const Product_all = mongoose.Schema(
       required: true,
     },
     additional_info: {
-      type: Array,
-    },
-    colors: {
       type: Array,
     },
     sizes: {

@@ -23,6 +23,8 @@ export default function Page({ params }) {
   const [listActive, setListActive] = useState(false);
   const [quantity, setQuantity] = useState("");
   const sizeRef = useRef(null);
+  const [imagesToBEShown, setImagesToBEShown] = useState(null);
+  const [colorName, setColorName] = useState("");
 
   useEffect(() => {
     console.log("data", data);
@@ -52,6 +54,8 @@ export default function Page({ params }) {
       .then((data) => {
         setProductData(data.data);
         setData({ size: data.data.sizes[0], quantity: 1 });
+        setImagesToBEShown(data.data.colorInfo[0].color_image);
+        setColorName(data.data.colorInfo[0].color);
 
         setTimeout(() => {
           document.getElementsByClassName("quantity1")[0].checked = true;
@@ -100,8 +104,8 @@ export default function Page({ params }) {
               modules={[FreeMode, Thumbs, Navigation, Pagination]}
               className="mySwiper"
             >
-              {productData
-                ? productData.product_images.map((image, index) => (
+              {imagesToBEShown
+                ? imagesToBEShown.map((image, index) => (
                     <SwiperSlide key={index}>
                       <Zoom>
                         {width > 850 && (
@@ -137,11 +141,10 @@ export default function Page({ params }) {
                 spaceBetween={8}
                 slidesPerView={4}
                 freeMode={true}
-                // watchSlidesVisibility={true}
                 watchSlidesProgress={true}
               >
-                {productData
-                  ? productData.product_images.map((image, index) => (
+                {imagesToBEShown
+                  ? imagesToBEShown.map((image, index) => (
                       <SwiperSlide key={index}>
                         <Image
                           className="rounded-md cursor-pointer border-[1px] border-[#EAEAF1] select-none "
@@ -185,13 +188,47 @@ export default function Page({ params }) {
             </div>
           </div>
 
-          {/* size, color,  */}
+          {/* color section  */}
+          <div>
+            <div className="border-[1.5px] border-[#EAEAF1] p-4 rounded-lg ">
+              <h1 className="text-lg font-semibold text-[#50505C] ">
+                Color: {colorName}
+              </h1>
+              <div className="flex gap-2">
+                {productData && productData.colorInfo.length > 1 ? (
+                  productData.colorInfo.map((color, index) => (
+                    <div key={index}>
+                      <div>
+                        <Image
+                          className="rounded-md cursor-pointer border-[1px] border-[#EAEAF1] select-none "
+                          src={color.color_image[0]}
+                          width={70}
+                          height={70}
+                          alt="Picture of the watch"
+                          onClick={() => {
+                            setImagesToBEShown(color.color_image);
+                            setColorName(color.color);
+                            // saving dcolor to data
+                            setData({ ...data, color: color.color });
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div></div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* size section  */}
           {productData && productData.sizes.length > 0 ? (
             <div className="border-[1.5px] border-[#EAEAF1] p-4 rounded-lg ">
               <h1 className="text-lg font-semibold text-[#50505C] ">Size</h1>
               <div className="flex gap-2">
                 {productData.sizes.map((size, index) => (
-                  <div key={index}>
+                  <div key={index} className="flex justify-center items-center">
                     <input
                       type="radio"
                       id={index}
@@ -219,11 +256,11 @@ export default function Page({ params }) {
             ""
           )}
 
-          {/* selecting quantity  */}
+          {/* selecting quantity section 1  */}
           <div className="border-[1.5px] border-[#EAEAF1] p-4 rounded-lg ">
             <h1 className="text-lg font-semibold text-[#50505C] ">Quantity</h1>
             <div className="flex gap-2">
-              <div>
+              <div className="flex justify-center items-center">
                 <input
                   type="radio"
                   id={"quantity1"}
@@ -241,7 +278,7 @@ export default function Page({ params }) {
                   {1}
                 </label>
               </div>
-              <div>
+              <div className="flex justify-center items-center">
                 <input
                   type="radio"
                   id={"quantity2"}
@@ -258,7 +295,7 @@ export default function Page({ params }) {
                   {2}
                 </label>
               </div>
-              <div>
+              <div className="flex justify-center items-center">
                 <input
                   type="radio"
                   id={"quantity3"}
@@ -277,7 +314,7 @@ export default function Page({ params }) {
               </div>
             </div>
 
-            {/* section2  */}
+            {/* quantity section2  */}
             <div className="relative w-12">
               <input
                 className="w-12 text-center border-[1px] outline-none rounded-sm border-[#767676]"
@@ -296,7 +333,7 @@ export default function Page({ params }) {
               />
               {listActive ? (
                 <div className="absolute w-full h-[80px]  overflow-scroll bg-[#F2F2F2] flex flex-col items-center shrink-0">
-                  <div className="w-full text-center">
+                  <div className="w-full text-center flex justify-center items-center">
                     <input
                       type="radio"
                       id={"quantity4"}
@@ -452,6 +489,7 @@ export default function Page({ params }) {
               ) : null}
             </div>
           </div>
+
           {/* buy and cart and other options */}
           <div>
             <div className="flex  gap-4 font-medium flex-wrap justify-center md:justify-start">

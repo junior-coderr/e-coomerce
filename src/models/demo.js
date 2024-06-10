@@ -38,10 +38,10 @@ const Product_Schema = mongoose.Schema(
       type: String,
       required: true,
     },
-    product_images: {
-      type: Array,
-      required: true,
-    },
+    // product_images: {
+    //   type: Array,
+    //   required: true,
+    // },
     product_category: {
       type: String,
       required: true,
@@ -57,9 +57,9 @@ const Product_Schema = mongoose.Schema(
     additional_info: {
       type: Array,
     },
-    colors: {
-      type: Array,
-    },
+    // colors: {
+    //   type: Array,
+    // },
     sizes: {
       type: Array,
     },
@@ -77,6 +77,18 @@ const Product_Schema = mongoose.Schema(
         },
       },
     ],
+    colorInfo: [
+      {
+        color: {
+          type: String,
+          required: false,
+        },
+        color_image: {
+          type: Array,
+          required: true,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
@@ -88,27 +100,29 @@ async function addProduct(
   product_name,
   product_description,
   product_price,
-  product_images,
+  // product_images,
   product_category,
   product_rating,
   product_reviews,
   additional_info,
-  colors,
+  // colors,
   sizes,
-  specifics
+  specifics,
+  colorInfo
 ) {
   const newProduct = new Product({
     product_name,
     product_description,
     product_price,
-    product_images,
+    // product_images,
     product_category,
     product_rating,
     product_reviews,
     additional_info,
-    colors,
+    // colors,
     sizes,
     specifics,
+    colorInfo,
   });
 
   return newProduct.save();
@@ -121,16 +135,35 @@ async function start() {
       `Product ${i}`,
       `Product ${i} description this product us very good and you should buy it.`,
       `${i * 100}`,
-      [
-        "https://woodmart.b-cdn.net/wp-content/uploads/2016/09/product-clock-1-3.jpg",
-      ],
+      // [
+      //   "https://woodmart.b-cdn.net/wp-content/uploads/2016/09/product-clock-1-3.jpg",
+      // ],
       "General",
       4.5,
       ["Good product", "Nice product", "Worth the price"],
       ["additional info"],
-      ["red", "blue"],
+      // ["red", "blue"],
       ["small", "medium", "large"],
-      [{ color: true, size: true }]
+      [{ color: true, size: true }],
+      [
+        {
+          color: "red",
+          color_image: [
+            "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8.jpg",
+            "https://woodmart.b-cdn.net/wp-content/uploads/2016/09/product-clock-1-3.jpg",
+            "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-new-1.jpg",
+          ],
+        },
+        {
+          color: "blue",
+          color_image: [
+            "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8-1.jpg",
+            "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-new-2.jpg",
+            "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-new-1-263x300.jpg",
+            "https://woodmart.b-cdn.net/wp-content/uploads/2016/09/accessories1.jpg",
+          ],
+        },
+      ]
     );
   }
 }
