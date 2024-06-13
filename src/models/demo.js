@@ -130,7 +130,7 @@ async function addProduct(
 
 async function start() {
   await connectDB();
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 1; i++) {
     const data = await addProduct(
       `Product ${i}`,
       `Product ${i} description this product us very good and you should buy it.`,
@@ -143,7 +143,7 @@ async function start() {
       ["Good product", "Nice product", "Worth the price"],
       ["additional info"],
       // ["red", "blue"],
-      ["small", "medium", "large"],
+      ["2xl", "xl", "l", "m"],
       [{ color: true, size: true }],
       [
         {

@@ -102,9 +102,6 @@ export default function Header({ props }) {
               } ${"absolute rounded-md z-10 p-2 m-2 w-full h-[150px] md:h-[200px] bg-white border-[1.2px] top-[100%]"}`}
             ></div>
           </div>
-          <Link href="/cart" className="hidden sm:block">
-            <span className="bi bi-heart-fill text-xl md:text-[22px] cursor-pointer text-[#017BF9]"></span>
-          </Link>
           <Link href="/cart">
             <span className="bi bi-cart3 text-xl md:text-2xl cursor-pointer"></span>
           </Link>

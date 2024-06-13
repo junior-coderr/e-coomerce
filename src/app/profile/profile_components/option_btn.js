@@ -25,11 +25,6 @@ export default function Option_btn() {
             <i className="bi bi-cart-fill text-[#f3f3f3] text-xl"></i>
           </button>
           <button className="bg-[#005dba] w-max shrink-0 flex justify-center items-center gap-2 text-white p-2 px-5 rounded-[4px]">
-            Wishlist
-            {/* adding icons  */}
-            <i className="bi bi-heart-fill  text-[#f3f3f3] text-xl"></i>
-          </button>
-          <button className="bg-[#005dba] w-max shrink-0 flex justify-center items-center gap-2 text-white p-2 px-5 rounded-[4px]">
             Customer support
             <i className="bi bi-chat-left-text-fill text-[#f3f3f3] text-xl"></i>
           </button>

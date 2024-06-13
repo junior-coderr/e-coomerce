@@ -3,9 +3,18 @@ import Image from "next/image";
 import { useRef, useEffect, useState } from "react";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
+import Link from "next/link";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Navigation, Thumbs, Pagination } from "swiper/modules";
+import localStorage from "@/app/components/helper/localStorage";
+
+// Redux store
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addOrderProduct,
+  clearOrderProduct,
+} from "@/redux/slices/orderDetails";
 
 // Import Swiper styles
 import "swiper/css";
@@ -25,15 +34,33 @@ export default function Page({ params }) {
   const sizeRef = useRef(null);
   const [imagesToBEShown, setImagesToBEShown] = useState(null);
   const [colorName, setColorName] = useState("");
+  const [pageLoaded, setPageLoaded] = useState(false);
 
+  // redux store
+  const orderDetails = useSelector((state) => state.orderDetails);
+  const dispatch = useDispatch();
+  // first clearing the order details
   useEffect(() => {
-    console.log("data", data);
     if (data.quantity < 4) {
       setQuantity("");
     }
+    dispatch(
+      addOrderProduct({
+        ...data,
+        product_id: productData ? productData._id : null,
+      })
+    );
   }, [data]);
 
   useEffect(() => {
+    // console.log("orderDetails", orderDetails);
+  }, [orderDetails]);
+
+  useEffect(() => {
+    // localStorage.setValue("a", "ALfa");
+    // console.log(localStorage.getValue("a"));
+    dispatch(clearOrderProduct());
+
     setWidth(window.innerWidth);
     window.addEventListener("resize", () => {
       setWidth(window.innerWidth);
@@ -53,18 +80,36 @@ export default function Page({ params }) {
       })
       .then((data) => {
         setProductData(data.data);
-        setData({ size: data.data.sizes[0], quantity: 1 });
+        setData({
+          size: data.data.sizes[0],
+          quantity: 1,
+          color: data.data.colorInfo[0].color,
+        });
+        dispatch(
+          addOrderProduct({
+            size: data.data.sizes[0],
+            quantity: 1,
+            color: data.data.colorInfo[0].color,
+            product_id: data.data._id,
+          })
+        );
         setImagesToBEShown(data.data.colorInfo[0].color_image);
         setColorName(data.data.colorInfo[0].color);
 
         setTimeout(() => {
-          document.getElementsByClassName("quantity1")[0].checked = true;
-          document.getElementsByClassName("size0")[0].checked = true;
+          try {
+            document.getElementsByClassName("quantity1")[0].checked = true;
+            document.getElementsByClassName("size0")[0].checked = true;
+          } catch (error) {
+            console.log(error);
+          }
         }, 300);
       })
       .catch((err) => {
         console.log(err);
       });
+
+    setPageLoaded(true);
   }, []);
 
   const zoomMove = (e, image) => {
@@ -195,7 +240,9 @@ export default function Page({ params }) {
                 Color: {colorName}
               </h1>
               <div className="flex gap-2">
-                {productData && productData.colorInfo.length > 1 ? (
+                {productData &&
+                productData.colorInfo &&
+                productData.colorInfo.length > 1 ? (
                   productData.colorInfo.map((color, index) => (
                     <div key={index}>
                       <div>
@@ -492,14 +539,22 @@ export default function Page({ params }) {
 
           {/* buy and cart and other options */}
           <div>
-            <div className="flex  gap-4 font-medium flex-wrap justify-center md:justify-start">
-              <div className="bg-theme w-[150px] shadow-md p-3 px-6 rounded-md text-white text-center cursor-pointer">
-                Buy Now
+            {pageLoaded ? (
+              <div className="flex  gap-4 font-medium flex-wrap justify-center md:justify-start">
+                <Link
+                  href="/checkout/single"
+                  className="bg-theme w-[150px] shadow-md p-3 px-6 rounded-md text-white text-center cursor-pointer"
+                  onClick={localStorage.setValue("orderDetails", orderDetails)}
+                >
+                  Buy Now
+                </Link>
+                <div className="bg-[#f2f2f2] w-[150px] shadow-sm border-[1px] p-3 px-6 rounded-md text-[black] text-center cursor-pointer">
+                  Add to cart
+                </div>
               </div>
-              <div className="bg-[#f2f2f2] w-[150px] shadow-sm border-[1px] p-3 px-6 rounded-md text-[black] text-center cursor-pointer">
-                Add to cart
-              </div>
-            </div>
+            ) : (
+              ""
+            )}
           </div>
 
           {/* description */}

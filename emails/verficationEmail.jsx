@@ -20,11 +20,6 @@ export default function VerificationEmail({ username, otp }) {
               Please enter this OTP to verify your account. This OTP is valid for 10 minutes.
             </Text>
             <Section align="center" style={section}>
-              <Link href="http://localhost:3000/dashboard" style={buttonLink}>
-                <Container style={buttonContainer}>
-                  <Text style={buttonText}>Verify Account</Text>
-                </Container>
-              </Link>
             </Section>
           </Section>
         </Container>

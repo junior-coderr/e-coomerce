@@ -1,7 +1,7 @@
 // components/ChangeEmail.js
 import React from 'react';
 import { Html, Head, Body, Container, Text, Link } from '@react-email/components';
-
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 const ChangeEmail = ({ email, token }) => (
   <Html>
     <Head />
@@ -30,7 +30,7 @@ const ChangeEmail = ({ email, token }) => (
                 </tr>
                 <tr>
                   <td align="center">
-                    <Link href={`http://localhost:3000/verified/logout/${token}`} style={button}>
+                    <Link href={`http://${baseUrl}/verified/logout/${token}`} style={button}>
                       <table cellSpacing="20" bgcolor="#4CAF50">
                         <tr>
                           <td align="center">

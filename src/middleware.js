@@ -22,19 +22,13 @@ export async function middleware(request) {
   if (url.pathname.startsWith("/profile")) {
     if (isVerified) {
       // console.log("token", token);
-      // console.log("isVerified", isVerified);
       return;
     } else {
-      // console.log("request.url2", request.url);
       return NextResponse.redirect(new URL("/register/login", request.url));
     }
   }
 
-  // for  verfiy page
-
   if (url.pathname.startsWith("/register/signup/verify")) {
-    // console.log("request.url\n \n", request.url);
-
     try {
       const isVerified = await verify(cookies().get("token").value);
       if (isVerified.otp) {
