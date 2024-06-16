@@ -38,6 +38,8 @@ export default function Single() {
           },
           body: JSON.stringify({
             productId: orderDetails.products.product_id,
+            productDetails: orderDetails.products,
+            order: true,
           }),
         }
       );
@@ -57,7 +59,7 @@ export default function Single() {
         <div>
           <div
             id={`product-${productDetails._id}`}
-            className="relative md:hover:shadow-lg md: hover:z-[3]  md:hover:scale-105 md:hover:mt-[-30px] duration-100 ease-in-out rounded-md"
+            className="relative rounded-md"
           >
             <div className="rounded-md cursor-pointer flex gap-3 flex-wrap w-full">
               <Link

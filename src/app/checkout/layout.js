@@ -1,13 +1,7 @@
-// "use client";
-// function App({ children }) {
-//   return <div className="flex flex-col">{children}</div>;
-// }
-
-// export default App;
-
 "use client";
-import React, { useState } from "react";
+import React, { use, useState, useEffect } from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import localStorage from "@/app/components/helper/localStorage";
 
 // Renders errors or successfull transactions on the screen.
 function Message({ content }) {
@@ -34,6 +28,12 @@ function App({ children }) {
     height: 40,
   };
   const [message, setMessage] = useState("");
+  const [orderDetails, setOrderDetails] = useState(null);
+
+  useEffect(() => {
+    setOrderDetails(localStorage.getValue("orderDetails"));
+    // console.log("orderDetails", orderDetails);
+  }, []);
 
   return (
     <div className="App flex flex-col justify-start w-full max-w-[700px] mx-auto p-5 items-center gap-8">
@@ -51,14 +51,7 @@ function App({ children }) {
                   },
                   // use the "body" param to optionally pass additional order information
                   // like product ids and quantities
-                  body: JSON.stringify({
-                    cart: [
-                      {
-                        id: "shoes",
-                        quantity: "1",
-                      },
-                    ],
-                  }),
+                  body: JSON.stringify({ orderDetails }),
                 });
 
                 const orderData = await response.json();
@@ -131,6 +124,12 @@ function App({ children }) {
             }}
             onShippingChange={async (data, actions) => {
               return actions.resolve();
+            }}
+            onError={(error) => {
+              console.error(error);
+              setMessage(
+                `Sorry, your transaction could not be processed...${error}`
+              );
             }}
           />
         </PayPalScriptProvider>

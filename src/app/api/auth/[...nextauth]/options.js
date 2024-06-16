@@ -8,6 +8,7 @@ import { sign } from "@/lib/jwt";
 
 import GoogleProvider from "next-auth/providers/google";
 import TwitterProvider from "next-auth/providers/twitter";
+import { current } from "@reduxjs/toolkit";
 
 const options = {
   providers: [
@@ -37,23 +38,25 @@ const options = {
         if (user.email) {
           const doestUserExists = await User.findOne({ email: user.email });
           if (!doestUserExists) {
-            await User.create({
+            const newUser = new User({
               name: user.name,
               email: user.email,
               profile_image: user.image,
             });
+
+            console.log(await newUser.save());
           }
 
           cookiesData.set("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: true,
             sameSite: "strict",
             maxAge: 60 * 60 * 24 * 7,
             path: "/",
           });
         } else {
           console.log("User not found :");
-          console.log(user, account, profile);
+          // console.log(user, account, profile);
           return false;
         }
 

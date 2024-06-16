@@ -130,7 +130,7 @@ async function addProduct(
 
 async function start() {
   await connectDB();
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; i < 20; i++) {
     const data = await addProduct(
       `Product ${i}`,
       `Product ${i} description this product us very good and you should buy it.`,

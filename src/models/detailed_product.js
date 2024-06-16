@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
-import { type } from "os";
 
-const Product_all = mongoose.Schema(
+const Product_all = new mongoose.Schema(
   {
     product_name: {
       type: String,

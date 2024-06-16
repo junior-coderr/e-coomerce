@@ -1,7 +1,18 @@
-import mongoose, { set } from "mongoose";
+import mongoose from "mongoose";
 
-// adding created at
-const user_schema = mongoose.Schema(
+const cartItemSchema = new mongoose.Schema({
+  product: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+    required: true,
+  },
+  product_id: { type: mongoose.Schema.Types.ObjectId, required: true },
+  quantity: { type: Number, required: true },
+  color: { type: String, required: true },
+  size: { type: String, required: true },
+});
+
+const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -16,22 +27,21 @@ const user_schema = mongoose.Schema(
       type: String,
       default: "",
     },
-    // wishlist: {
-    //   type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Wishlist" }],
-    //   unique: true, // Ensures array contains unique elements
-    //   default: [],
-    // },
-    cart: {
-      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Cart" }],
-      unique: true, // Ensures array contains unique elements
-      default: [],
-    },
-    orders: {
-      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
-      unique: true, // Ensures array contains unique elements
-      default: [],
-    },
+    cart: [
+      {
+        product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+        product_id: { type: mongoose.Schema.Types.ObjectId, default: null },
+        quantity: { type: Number, default: 1 },
+        color: { type: String, default: "" },
+        size: { type: String, default: "" },
+      },
+    ],
+    orders: [cartItemSchema],
     address: {
+      type: Array,
+      default: [],
+    },
+    currentOrder: {
       type: Array,
       default: [],
     },
@@ -39,6 +49,5 @@ const user_schema = mongoose.Schema(
   { timestamps: true }
 );
 
-const User = mongoose.models.User || mongoose.model("User", user_schema);
-
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 export default User;

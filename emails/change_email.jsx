@@ -30,7 +30,7 @@ const ChangeEmail = ({ email, token }) => (
                 </tr>
                 <tr>
                   <td align="center">
-                    <Link href={`http://${baseUrl}/verified/logout/${token}`} style={button}>
+                    <Link href={`${baseUrl}/verified/logout/${token}`} style={button}>
                       <table cellSpacing="20" bgcolor="#4CAF50">
                         <tr>
                           <td align="center">

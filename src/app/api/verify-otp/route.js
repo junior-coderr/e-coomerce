@@ -30,7 +30,25 @@ export async function POST(req) {
       console.log("not registered");
       cookieStore.set("token", sign({ name, email, isRegistered: true }));
       console.log("token set");
-      const createdUser = await new User({ name, email }).save();
+      const createdUser = new User({
+        name,
+        email,
+        cart: [], // Empty array for cart
+        orders: [], // Empty array for orders
+        address: [],
+        currentOrder: [],
+      });
+
+      await createdUser.save();
+
+      // const createdUser = await User.create({
+      //   name,
+      //   email,
+      //   cart: [], // Empty array for cart
+      //   orders: [], // Empty array for orders
+      //   address: [],
+      //   currentOrder: [],
+      // });
       console.log("created user", createdUser);
       return NextResponse.json(
         { success: true, message: "Verified", data: createdUser },
@@ -45,6 +63,8 @@ export async function POST(req) {
       );
     }
   } catch (error) {
+    console.log("error", error);
+
     return NextResponse.json(
       {
         success: false,

@@ -23,6 +23,7 @@ import "swiper/css/navigation";
 import "swiper/css/thumbs";
 import "swiper/css/free-mode";
 import Back from "@/app/profile/profile_components/button/back_btn";
+import toast from "react-hot-toast";
 
 export default function Page({ params }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -35,6 +36,8 @@ export default function Page({ params }) {
   const [imagesToBEShown, setImagesToBEShown] = useState(null);
   const [colorName, setColorName] = useState("");
   const [pageLoaded, setPageLoaded] = useState(false);
+  const [isCarted, setIsCarted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // redux store
   const orderDetails = useSelector((state) => state.orderDetails);
@@ -53,12 +56,6 @@ export default function Page({ params }) {
   }, [data]);
 
   useEffect(() => {
-    // console.log("orderDetails", orderDetails);
-  }, [orderDetails]);
-
-  useEffect(() => {
-    // localStorage.setValue("a", "ALfa");
-    // console.log(localStorage.getValue("a"));
     dispatch(clearOrderProduct());
 
     setWidth(window.innerWidth);
@@ -73,6 +70,7 @@ export default function Page({ params }) {
       },
       body: JSON.stringify({
         productId: params.id,
+        carted: true,
       }),
     })
       .then((res) => {
@@ -100,16 +98,22 @@ export default function Page({ params }) {
           try {
             document.getElementsByClassName("quantity1")[0].checked = true;
             document.getElementsByClassName("size0")[0].checked = true;
+            setPageLoaded(true);
           } catch (error) {
             console.log(error);
+            toast.error("Something went wrong!");
           }
         }, 300);
+
+        // checking itme already exists in the cart
+        console.log("data carted:", data.carted);
+        if (data.carted) {
+          setIsCarted(true);
+        }
       })
       .catch((err) => {
         console.log(err);
       });
-
-    setPageLoaded(true);
   }, []);
 
   const zoomMove = (e, image) => {
@@ -129,6 +133,48 @@ export default function Page({ params }) {
     const elem = e.target;
     elem.style.backgroundImage = ``;
     elem.style.backgroundPosition = "50% 50%";
+  };
+
+  const addToCart = () => {
+    console.log("data", data);
+
+    if (isCarted) return;
+
+    setIsLoading(true);
+    toast.loading("loading");
+    fetch("/api/add-cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        product_id: productData._id,
+        quantity: data.quantity,
+        color: data.color,
+        size: data.size,
+      }),
+    })
+      .then((res) => {
+        const data = res.json();
+        return data;
+      })
+      .then((data) => {
+        console.log("Add to cart data", data);
+        if (data.carted) {
+          setIsCarted(true);
+          toast.dismiss();
+          toast.success("Added");
+        } else {
+          toast.error("failed to add");
+        }
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log("add to cart error", err);
+        setIsLoading(false);
+        toast.dismiss();
+        toast.error("failed to add");
+      });
   };
 
   return (
@@ -481,7 +527,6 @@ export default function Page({ params }) {
                       htmlFor={"quantity8"}
                       className=" block  min-w-full select-none hover:text-[#017BF9] hover:cursor-pointer"
                       onClick={(e) => {
-                        // console.log("quantity", e.target.text);
                         setQuantity(e.target.innerText);
                       }}
                     >
@@ -503,7 +548,6 @@ export default function Page({ params }) {
                       htmlFor={"quantity9"}
                       className=" block  min-w-full select-none hover:text-[#017BF9] hover:cursor-pointer"
                       onClick={(e) => {
-                        // console.log("quantity", e.target.text);
                         setQuantity(e.target.innerText);
                       }}
                     >
@@ -525,7 +569,6 @@ export default function Page({ params }) {
                       htmlFor={"quantity10"}
                       className=" block  min-w-full select-none hover:text-[#017BF9] hover:cursor-pointer"
                       onClick={(e) => {
-                        // console.log("quantity", e.target.text);
                         setQuantity(e.target.innerText);
                       }}
                     >
@@ -548,9 +591,17 @@ export default function Page({ params }) {
                 >
                   Buy Now
                 </Link>
-                <div className="bg-[#f2f2f2] w-[150px] shadow-sm border-[1px] p-3 px-6 rounded-md text-[black] text-center cursor-pointer">
-                  Add to cart
-                </div>
+                {!isCarted ? (
+                  <button
+                    className="bg-[#f2f2f2] w-[150px] shadow-sm border-[1px] p-3 px-6 rounded-md text-[black] text-center cursor-pointer"
+                    onClick={addToCart}
+                    disabled={isLoading}
+                  >
+                    Add to cart
+                  </button>
+                ) : (
+                  ""
+                )}
               </div>
             ) : (
               ""

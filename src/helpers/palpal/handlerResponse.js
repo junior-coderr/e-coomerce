@@ -4,6 +4,7 @@ export async function handleResponse(response) {
     return {
       jsonResponse,
       httpStatusCode: response.status,
+      success: true,
     };
   } catch (err) {
     const errorMessage = await response.text();

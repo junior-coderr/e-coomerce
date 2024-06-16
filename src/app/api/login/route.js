@@ -26,7 +26,7 @@ export async function POST(req) {
         )
       );
 
-      console.log("existingUserVerifiedByEmail", existingUserVerifiedByEmail);
+      // console.log("existingUserVerifiedByEmail", existingUserVerifiedByEmail);
       otp = await bcrypt.hash(otp.toString(), salt);
       const token = sign({
         name: existingUserVerifiedByEmail.name,
