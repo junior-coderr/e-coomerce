@@ -1,11 +1,5 @@
-// import { Roboto } from "next/font/google";
 import { Bricolage_Grotesque } from "next/font/google";
 import Providers from "../redux/provider.js";
-
-// export const inter = Roboto({
-//   weight: ["400", "700"],
-//   subsets: ["latin"],
-// });
 
 const Bricolage_Grotesque_font = Bricolage_Grotesque({
   weight: ["400", "500", "600", "700"],

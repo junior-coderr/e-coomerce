@@ -9,11 +9,11 @@ import { verify } from "@/lib/jwt";
 import Product from "@/models/show_product";
 
 // createOrder.js
-const createOrder = async (cart) => {
+const createOrder = async (data) => {
   // use the cart information passed from the front-end to calculate the purchase unit details
   console.log(
     "shopping cart information passed from the frontend createOrder() callback:",
-    cart
+    data
   );
 
   try {
@@ -29,9 +29,36 @@ const createOrder = async (cart) => {
       const user = await User.findOne({ email });
 
       if (!user) return { success: false, error: "User not found." };
-      const quantity = user.currentOrder[0].quantity;
-      const price = await Product.findById(user.currentOrder[0].product_id);
-      const total = quantity * price.product_price;
+
+      let total = null;
+      let purchaseUnits = {};
+      console.log("is single", data.isSingle);
+      if (data.isSingle) {
+        const quantity = user.currentOrder[0].quantity;
+        const price = await Product.findById(user.currentOrder[0].product_id);
+        total = parseInt(quantity) * parseFloat(price.product_price);
+      } else {
+        total = 0;
+
+        const item = await user.populate("cart.product");
+        for (let i = 0; i < item.cart.length; i++) {
+          console.log("product price:", item.cart[i].product.product_price);
+          total +=
+            parseFloat(item.cart[i].product.product_price) *
+            parseInt(item.cart[i].quantity);
+          console.log("total", total);
+        }
+
+        // purchaseUnits = item.cart.map((product) => ({
+        //   name: product.product.product_name,
+        //   product_id: product.product._id,
+        //   color: product.color,
+        //   size: product.size,
+        //   quantity: product.quantity,
+        //   unit_amount: product.product.product_price,
+        // }));
+        // console.log("purchaseUnits", purchaseUnits);
+      }
 
       if (!total) return { success: false, error: "Total not found." };
       const payload = {
@@ -41,6 +68,12 @@ const createOrder = async (cart) => {
             amount: {
               currency_code: "USD",
               value: total,
+              breakdown: {
+                item_total: {
+                  currency_code: "USD",
+                  value: total,
+                },
+              },
             },
           },
         ],
@@ -74,9 +107,9 @@ const createOrder = async (cart) => {
 // createOrder route
 export async function POST(req) {
   try {
-    // use the cart information passed from the front-end to calculate the order amount detals
-    const { cart } = await req.json();
-    const { jsonResponse, httpStatusCode } = await createOrder(cart);
+    // use the cart information passed from the front-end to calculate the order amount details
+    const data = await req.json();
+    const { jsonResponse, httpStatusCode } = await createOrder(data);
     // res.status(httpStatusCode).json(jsonResponse);
     return NextResponse.json(jsonResponse, { status: httpStatusCode });
   } catch (error) {

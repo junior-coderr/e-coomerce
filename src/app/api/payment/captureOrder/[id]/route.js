@@ -31,6 +31,8 @@ export async function POST(req, { params }) {
   try {
     const { id } = params;
     const { jsonResponse, httpStatusCode } = await captureOrder(id);
+    console.log("jsonResponse: ", jsonResponse);
+    console.log("httpStatusCode: ", httpStatusCode);
     return NextResponse.json(jsonResponse, { status: httpStatusCode });
   } catch (error) {
     console.error("Failed to create order:", error);

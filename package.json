@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "@next/font": "^14.1.4",
     "@paypal/react-paypal-js": "^8.3.0",
     "@react-email/components": "^0.0.19",
@@ -18,7 +21,7 @@
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "bootstrap-icons": "^1.11.3",
-    "framer-motion": "^11.0.28",
+    "framer-motion": "^11.2.10",
     "jose": "^5.2.4",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.1",
@@ -29,6 +32,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-email": "^2.1.1",
+    "react-flagkit": "^2.0.4",
     "react-hot-toast": "^2.4.1",
     "react-intersection-observer": "^9.8.2",
     "react-medium-image-zoom": "^5.2.0",

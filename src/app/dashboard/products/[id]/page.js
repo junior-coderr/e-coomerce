@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRef, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
 import Link from "next/link";
@@ -24,6 +25,7 @@ import "swiper/css/thumbs";
 import "swiper/css/free-mode";
 import Back from "@/app/profile/profile_components/button/back_btn";
 import toast from "react-hot-toast";
+import { set } from "mongoose";
 
 export default function Page({ params }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -39,6 +41,7 @@ export default function Page({ params }) {
   const [isCarted, setIsCarted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const router = useRouter();
   // redux store
   const orderDetails = useSelector((state) => state.orderDetails);
   const dispatch = useDispatch();
@@ -167,10 +170,18 @@ export default function Page({ params }) {
         } else {
           toast.error("failed to add");
         }
+
+        if (!data.isVerified) {
+          toast.dismiss();
+          toast.error("Please login to add to cart");
+          setTimeout(() => {
+            router.push("/register/login");
+          }, 500);
+        }
         setIsLoading(false);
       })
       .catch((err) => {
-        console.log("add to cart error", err);
+        console.log("add to cart error", err.message);
         setIsLoading(false);
         toast.dismiss();
         toast.error("failed to add");

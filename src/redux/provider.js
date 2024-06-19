@@ -4,6 +4,7 @@ import store from "./store";
 import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "react-hot-toast";
 import { SessionProvider } from "next-auth/react";
+import { ChakraProvider } from "@chakra-ui/react";
 
 export default function Providers({ children, pageProps }) {
   return (
@@ -21,7 +22,9 @@ export default function Providers({ children, pageProps }) {
       />
       <Toaster />
       <SessionProvider session={pageProps}>
-        <Provider store={store}>{children}</Provider>
+        <Provider store={store}>
+          <ChakraProvider>{children}</ChakraProvider>
+        </Provider>
       </SessionProvider>
     </>
   );

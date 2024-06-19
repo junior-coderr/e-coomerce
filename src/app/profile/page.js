@@ -56,7 +56,7 @@ export default async function Profile() {
             <h3 className="text-[18px] font-medium">Address :</h3>
           </div>
           <div className="text-[16px]">
-            {data.address != "" ? data.address : "something here!!"}
+            {/* {data.address != "" ? data.address : "something here!!"} */}
           </div>
         </div>
       </div>

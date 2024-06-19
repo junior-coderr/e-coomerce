@@ -112,7 +112,7 @@ export default function Edit() {
           >
             <input
               className="text-[16px] bg-gray-100 p-2 rounded-md border-2 w-full"
-              value={data.address ? data.address : ""}
+              // value={data.address ? data.address : ""}
             />
             <div>
               <Link href={"/dashbaord"} className={inp3 ? "block" : "hidden"}>

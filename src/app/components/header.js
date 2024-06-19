@@ -102,7 +102,7 @@ export default function Header({ props }) {
               } ${"absolute rounded-md z-10 p-2 m-2 w-full h-[150px] md:h-[200px] bg-white border-[1.2px] top-[100%]"}`}
             ></div>
           </div>
-          <Link href="/cart">
+          <Link href="/checkout/multiple">
             <span className="bi bi-cart3 text-xl md:text-2xl cursor-pointer"></span>
           </Link>
           {/* adding profile icon
