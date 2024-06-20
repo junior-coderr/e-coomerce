@@ -3,7 +3,6 @@ import { Kufam } from "next/font/google";
 import { useState } from "react";
 import { useEffect } from "react";
 import Link from "next/link";
-import { set } from "mongoose";
 
 const kufam = Kufam({
   weight: "800",
