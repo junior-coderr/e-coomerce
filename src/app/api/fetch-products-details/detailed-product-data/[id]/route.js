@@ -33,9 +33,12 @@ export async function POST(req, { params }) {
       console.log("updatedProduct", updatedProduct);
     }
 
+    if (isVerified) {
+      var u = await User.findOne({ email: isVerified.email });
+    }
+    var address = u ? u.address : null;
     // checking if item is in cart
     if (isVerified && updateData.carted) {
-      const u = await User.findOne({ email: isVerified.email });
       u.cart.forEach((e) => {
         if (e.product_id == params.id) {
           carted = true;
@@ -45,8 +48,16 @@ export async function POST(req, { params }) {
       console.log("No u");
     }
 
+    console.log("time", data.delivery_time);
     return NextResponse.json(
-      { data, success: true, carted: carted },
+      {
+        data,
+        success: true,
+        carted: carted,
+        address: address,
+        delivery_charges: data.delivery_charges,
+        delivery_time: data.delivery_time,
+      },
       { status: 200 }
     );
   } catch (err) {

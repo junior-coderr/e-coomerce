@@ -25,7 +25,6 @@ import "swiper/css/thumbs";
 import "swiper/css/free-mode";
 import Back from "@/app/profile/profile_components/button/back_btn";
 import toast from "react-hot-toast";
-import { set } from "mongoose";
 
 export default function Page({ params }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -85,6 +84,7 @@ export default function Page({ params }) {
           size: data.data.sizes[0],
           quantity: 1,
           color: data.data.colorInfo[0].color,
+          delivery_charges: data.data.delivery_charges,
         });
         dispatch(
           addOrderProduct({
@@ -92,6 +92,7 @@ export default function Page({ params }) {
             quantity: 1,
             color: data.data.colorInfo[0].color,
             product_id: data.data._id,
+            delivery_charges: data.data.delivery_charges,
           })
         );
         setImagesToBEShown(data.data.colorInfo[0].color_image);
@@ -108,7 +109,7 @@ export default function Page({ params }) {
           }
         }, 300);
 
-        // checking itme already exists in the cart
+        // checking item already exists in the cart
         console.log("data carted:", data.carted);
         if (data.carted) {
           setIsCarted(true);
@@ -145,6 +146,7 @@ export default function Page({ params }) {
 
     setIsLoading(true);
     toast.loading("loading");
+    console.log("delivery charges", productData.delivery_charges);
     fetch("/api/add-cart", {
       method: "POST",
       headers: {
@@ -155,6 +157,7 @@ export default function Page({ params }) {
         quantity: data.quantity,
         color: data.color,
         size: data.size,
+        delivery_charges: productData.delivery_charges,
       }),
     })
       .then((res) => {

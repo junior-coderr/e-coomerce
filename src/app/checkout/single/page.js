@@ -5,14 +5,402 @@ import Image from "next/image";
 import localStorage from "@/app/components/helper/localStorage";
 import Back from "@/app/profile/profile_components/button/back_btn";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-// import localStorage from "@/app/components/helper/localStorage";
+import Flag from "react-flagkit";
+import { useDisclosure } from "@chakra-ui/react";
+import {
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+} from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
+
+import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
+import toast from "react-hot-toast";
 
 // Renders errors or successfull transactions on the screen.
 function Message({ content }) {
   return <p>{content}</p>;
 }
-
 export default function Single() {
+  const chakra_toast = useToast();
+  function HomePage({ text }) {
+    // const toast = useToast();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [loading, setLoading] = useState(false);
+    const countries = [
+      { name: "United States", code: "US", prefix: "+1" },
+      { name: "United Kingdom", code: "GB", prefix: "+44" },
+      { name: "Canada", code: "CA", prefix: "+1" },
+      { name: "Australia", code: "AU", prefix: "+61" },
+      { name: "Germany", code: "DE", prefix: "+49" },
+      { name: "France", code: "FR", prefix: "+33" },
+      { name: "Japan", code: "JP", prefix: "+81" },
+      { name: "India", code: "IN", prefix: "+91" },
+      { name: "Brazil", code: "BR", prefix: "+55" },
+    ];
+
+    const [isValid, setIsValid] = useState({
+      firstName: false,
+      firstNameValue: "",
+      prefix: true,
+      prefixValue: "",
+      phone: false,
+      phoneValue: "",
+      street: false,
+      streetValue: "",
+      streetOptionalValue: "",
+      city: false,
+      cityValue: "",
+      state: false,
+      stateValue: "",
+      zip: false,
+      zipValue: "",
+    });
+
+    const addingAddress = async () => {
+      if (
+        isValid.firstName &&
+        isValid.phone &&
+        isValid.street &&
+        isValid.city &&
+        isValid.state &&
+        isValid.zip
+      ) {
+        setLoading(true);
+        try {
+          const response = await fetch("/api/add-address", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              address: {
+                country: selectedCountry,
+                code: selected,
+                firstName: isValid.firstNameValue,
+                phone: isValid.phoneValue,
+                street: isValid.streetValue,
+                streetOptional: isValid.streetOptionalValue,
+                city: isValid.cityValue,
+                state: isValid.stateValue,
+                zip: isValid.zipValue,
+              },
+            }),
+          });
+
+          const address = await response.json();
+          setLoading(false);
+          console.log("address", address);
+          if (address.success) {
+            loadProductDetails()
+              .then((res) => {
+                if (res.success) {
+                  setProductDetails({
+                    ...res.data,
+                    delivery_charges: res.delivery_charges,
+                    increment: res.increment,
+                    estimated_delivery_time: res.estimated_delivery_time,
+                  });
+                  console.log("res", res);
+                  setAddressToBeShown(res.address);
+                }
+              })
+              .catch((error) => {
+                console.log("error", error);
+              });
+            setAddressToBeShown({
+              country: selectedCountry,
+              code: selected,
+              firstName: isValid.firstNameValue,
+              phone: isValid.phoneValue,
+              street: isValid.streetValue,
+              streetOptional: isValid.streetOptionalValue,
+              city: isValid.cityValue,
+              state: isValid.stateValue,
+              zip: isValid.zipValue,
+            });
+
+            onClose();
+            console.log("Address added successfully");
+            toast.success("Address added successfully");
+          } else {
+            toast.error("Could not add address");
+          }
+          // return address;
+        } catch (error) {
+          // console.error(error);
+          toast.error("Could not add address error");
+          setLoading(false);
+        }
+      } else {
+        if (!isValid.firstName) {
+          toast.error("First name is required");
+        } else if (!isValid.prefix) {
+          toast.error("Prefix is required");
+        } else if (!isValid.phone) {
+          toast.error("Phone number is required");
+        } else if (!isValid.street) {
+          toast.error("Street is required");
+        } else if (!isValid.city) {
+          toast.error("City is required");
+        } else if (!isValid.state) {
+          toast.error("State is required");
+        } else if (!isValid.zip) {
+          toast.error("Zip code is required");
+        } else {
+          toast.error("All fields are required");
+        }
+      }
+
+      // adding switch case for data validation
+    };
+
+    const [selected, setSelected] = useState(countries[0].code);
+    const [countryPrefix, setCountryPrefix] = useState(countries[0].prefix);
+    const [selectedCountry, setSelectedCountry] = useState(countries[0].name);
+    return (
+      <>
+        <Button onClick={onOpen}>
+          <span className="text-[#3f3f3f]">{text}</span>
+        </Button>
+
+        <Modal
+          closeOnOverlayClick={false}
+          isOpen={isOpen}
+          onClose={onClose}
+          size={"full"}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader className="text-center">
+              <div className="text-2xl font-bold">Add Address</div>
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={6}>
+              <div className="w-full  max-w-[800px] mx-auto ">
+                <Menu>
+                  {({ isOpen }) => (
+                    <>
+                      <MenuButton isActive={isOpen} as={Button}>
+                        <div className="flex gap-2">
+                          <Flag country={selected} />
+                          <span className="text-[#3f3f3f]">
+                            {selectedCountry}
+                          </span>
+                          <i className="bi bi-chevron-down"></i>
+                        </div>
+                      </MenuButton>
+                      <MenuList>
+                        {countries.map((country, index) => (
+                          <MenuItem
+                            key={index}
+                            onClick={() => {
+                              setSelected(country.code);
+                              setSelectedCountry(country.name);
+                              setCountryPrefix(country.prefix);
+                            }}
+                          >
+                            <Flag country={country.code} />
+                            <span className="text-[#3f3f3f] ml-2">
+                              {country.name}
+                            </span>
+                          </MenuItem>
+                        ))}
+                      </MenuList>
+                    </>
+                  )}
+                </Menu>
+
+                <div className="mt-4 w-full">
+                  <h3 className="text-xl font-bold">Contact Information</h3>
+                  <div className="flex gap-4 mt-2 flex-wrap">
+                    <input
+                      type="text"
+                      placeholder="First Name"
+                      // className="border-[1px] border-[#EAEAF1] p-2 addrInp"
+                      className={`border-[1px] border-[#EAEAF1] p-2 ${
+                        isValid.firstNameValue != ""
+                          ? isValid.firstName
+                            ? ""
+                            : "border-red-500 outline-[#b70202]"
+                          : ""
+                      }`}
+                      onChange={(e) => {
+                        setIsValid({
+                          ...isValid,
+                          firstName: e.target.value.length > 2 ? true : false,
+                          firstNameValue: e.target.value,
+                        });
+                      }}
+                    />
+                    <div className="flex gap-[2px]">
+                      <input
+                        type="text"
+                        placeholder="+"
+                        // className="border-[1px] border-[#EAEAF1] p-2 max-w-[60px]"
+                        className={`border-[1px] border-[#EAEAF1] p-2 max-w-[60px] ${
+                          isValid.prefixValue != ""
+                            ? isValid.prefix
+                              ? ""
+                              : "border-red-500 outline-[#b70202]"
+                            : ""
+                        }`}
+                        value={countryPrefix}
+                        onChange={(e) => {
+                          setCountryPrefix(e.target.value);
+                          setIsValid({
+                            ...isValid,
+                            prefix: e.target.value.includes("+") ? true : false,
+                            prefixValue: e.target.value,
+                          });
+                        }}
+                      />
+                      <input
+                        type="number"
+                        // className="border-[1px] border-[#EAEAF1] p-2 addrInp"
+                        className={`border-[1px] border-[#EAEAF1] p-2 ${
+                          isValid.phoneValue != ""
+                            ? isValid.phone
+                              ? ""
+                              : "border-red-500 outline-[#b70202]"
+                            : ""
+                        }`}
+                        placeholder="Phone Number*"
+                        onChange={(e) => {
+                          setIsValid({
+                            ...isValid,
+                            phone: e.target.value.length > 4 ? true : false,
+                            phoneValue: e.target.value,
+                          });
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 w-full">
+                  <h3 className="text-xl font-bold">Address</h3>
+                  <div className="flex gap-4 w-full mt-2 flex-wrap">
+                    <input
+                      type="text"
+                      placeholder="Street, house/apartment*"
+                      // className="border-[1px] border-[#EAEAF1] p-2 w-full addrInp"
+                      className={`border-[1px] border-[#EAEAF1] p-2 w-full ${
+                        isValid.streetValue != ""
+                          ? isValid.street
+                            ? ""
+                            : "border-red-500 outline-[#b70202]"
+                          : ""
+                      }`}
+                      onChange={(e) => {
+                        setIsValid({
+                          ...isValid,
+                          street: e.target.value.length > 4 ? true : false,
+                          streetValue: e.target.value,
+                        });
+                      }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Apt, suite, etc. (optional)"
+                      className="border-[1px] border-[#EAEAF1] p-2 w-full addrInp"
+                      onChange={(e) => {
+                        setIsValid({
+                          ...isValid,
+                          streetOptionalValue: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                  <div className="flex gap-4 mt-2">
+                    <input
+                      type="text"
+                      placeholder="City*"
+                      // className="border-[1px] border-[#EAEAF1] p-2 w-full"
+                      className={`border-[1px] border-[#EAEAF1] p-2 w-full ${
+                        isValid.cityValue != ""
+                          ? isValid.city
+                            ? ""
+                            : "border-red-500 outline-[#b70202]"
+                          : ""
+                      }`}
+                      onChange={(e) => {
+                        setIsValid({
+                          ...isValid,
+                          city: e.target.value.length > 2 ? true : false,
+                          cityValue: e.target.value,
+                        });
+                      }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="State/Province*"
+                      // className="border-[1px] border-[#EAEAF1] p-2 w-full"
+                      className={`border-[1px] border-[#EAEAF1] p-2 w-full ${
+                        isValid.stateValue != ""
+                          ? isValid.state
+                            ? ""
+                            : "border-red-500 outline-[#b70202]"
+                          : ""
+                      }`}
+                      onChange={(e) => {
+                        setIsValid({
+                          ...isValid,
+                          state: e.target.value.length > 2 ? true : false,
+                          stateValue: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                  <div className="flex gap-4 mt-2 ">
+                    <input
+                      type="text"
+                      placeholder="Zip Code*"
+                      // className={`border-[1px] border-[#EAEAF1] p-2 w-full max-w-[220px]`}
+                      className={`border-[1px] border-[#EAEAF1] p-2 w-full max-w-[220px] ${
+                        isValid.zipValue != ""
+                          ? isValid.zip
+                            ? ""
+                            : "border-red-500 outline-[#b70202]"
+                          : ""
+                      }`}
+                      onChange={(e) => {
+                        setIsValid({
+                          ...isValid,
+                          zip: e.target.value.length > 2 ? true : false,
+                          zipValue: e.target.value,
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end mt-5 items-end">
+                  <Button
+                    colorScheme="blue"
+                    mr={3}
+                    onClick={addingAddress}
+                    isLoading={loading}
+                  >
+                    Save
+                  </Button>
+                  <Button onClick={onClose}>Cancel</Button>
+                </div>
+              </div>
+            </ModalBody>
+
+            <ModalFooter></ModalFooter>
+          </ModalContent>
+        </Modal>
+      </>
+    );
+  }
+
   // paypal setup
 
   const initialOptions = {
@@ -35,16 +423,15 @@ export default function Single() {
     height: 40,
   };
   const [message, setMessage] = useState("");
-  // const [orderDetails, setOrderDetails] = useState(null);
 
   useEffect(() => {
     setOrderDetails(localStorage.getValue("orderDetails"));
-    // console.log("orderDetails", orderDetails);
   }, []);
 
   // setting up redux store
   const [productDetails, setProductDetails] = useState(null);
   const [orderDetails, setOrderDetails] = useState(null);
+  const [addressToBeShown, setAddressToBeShown] = useState(null);
 
   useEffect(() => {
     setOrderDetails(localStorage.getValue("orderDetails"));
@@ -54,7 +441,19 @@ export default function Single() {
     loadProductDetails()
       .then((res) => {
         if (res.success) {
-          setProductDetails(res.data);
+          setProductDetails({
+            ...res.data,
+            delivery_charges: res.delivery_charges,
+            increment: res.increment,
+            estimated_delivery_time: res.estimated_delivery_time,
+          });
+          console.log("returned 2", {
+            ...res.data,
+            delivery_charges: res.delivery_charges,
+            increment: res.increment,
+            estimated_delivery_time: res.estimated_delivery_time,
+          });
+          setAddressToBeShown(res.address);
         }
       })
       .catch((error) => {
@@ -64,7 +463,6 @@ export default function Single() {
 
   async function loadProductDetails() {
     try {
-      // console.log("product_id", orderDetails.products.product_id);
       const res = await fetch(
         `/api/fetch-products-details/detailed-product-data/${orderDetails.products.product_id}`,
         {
@@ -81,7 +479,54 @@ export default function Single() {
       );
 
       const data = await res.json();
-      return { success: true, data: data.data };
+      console.log("data", data);
+      let d = null;
+      let t = null;
+      console.log("time", data.delivery_time);
+      console.log("Address", data.address);
+      for (let i = 0; i < data.delivery_charges.length; i++) {
+        // console.log()
+        if (
+          data.delivery_charges[i].country ===
+          data.address[data.address.length - 1].code
+        ) {
+          d = i;
+          console.log("matched once");
+          // break;
+        }
+
+        if (
+          data.delivery_time[i].country ===
+          data.address[data.address.length - 1].code
+        ) {
+          console.log("matched once");
+          t = i;
+          // break;
+        }
+      }
+
+      if (d == null) {
+        chakra_toast({
+          title: "Address Error",
+          position: "top",
+          description: "Unable to deliver to this address",
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+        // settin it up for manual cancle
+        // toast.error("Unable to deliver to this address", { duration: 5000 });
+      }
+      console.log("d", d);
+      return {
+        success: true,
+        data: data.data,
+        address: data.address,
+        delivery_charges:
+          d != null ? data.delivery_charges[d].base_charge : null,
+        increment: d != null ? data.delivery_charges[d].increment : null,
+        estimated_delivery_time: t != null ? data.delivery_time[t].time : null,
+      };
     } catch (error) {
       return { success: false, message: error.message };
     }
@@ -112,7 +557,7 @@ export default function Single() {
                   />
                 </Link>
 
-                <div className="w-[100%]  border-[1px] rounded-md border-[#EAEAF1] select-none p-3 max-w-[400px] mx-auto flex flex-col gap-1 text-[#53514D] text-xl font-medium cursor-default">
+                <div className="w-[100%]  border-[1px] rounded-md border-[#EAEAF1] select-none p-3 max-w-[400px] mx-auto flex flex-col gap-[2px] text-[#53514D] text-lg font-medium cursor-default">
                   {/* name  */}
                   <h1 className="text-2xl font-semibold text-[#313131] ">
                     {productDetails.product_name}
@@ -149,6 +594,13 @@ export default function Single() {
                       {productDetails.product_price}
                     </span>
                   </div>
+                  {/* shipping details  */}
+                  <div className="flex justify-end text-sm pb-0 pt-2 flex-col font-semibold">
+                    <p>
+                      Estimated Delivery time:{" "}
+                      {productDetails.estimated_delivery_time}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -157,9 +609,91 @@ export default function Single() {
           "loading..."
         )}
 
+        {/* <Address /> */}
+        {addressToBeShown && addressToBeShown.length > 0 ? (
+          <>
+            {/* ${
+                // productDetails.delivery_charges == null
+                // ? "border-[#EAEAF1]"
+                "border-[#e13100]"
+              } */}
+            <div
+              className={`${
+                productDetails.delivery_charges != null
+                  ? "border-[#EAEAF1]"
+                  : "border-[#e13100]"
+              } w-[100%] border-[1px] rounded-md  select-none p-3 max-w-[400px] mx-auto flex flex-wrap gap-2 text-[#53514D] text-lg font-medium cursor-default`}
+            >
+              <div>
+                <h1 className="text-2xl font-semibold text-[#313131] ">
+                  Shipping Address
+                </h1>
+                <p className=" mt-2">
+                  {addressToBeShown[addressToBeShown.length - 1].firstName}
+                  {", "} {addressToBeShown[addressToBeShown.length - 1].phone}
+                </p>
+                <p>
+                  {addressToBeShown[addressToBeShown.length - 1].street}
+                  {", "}{" "}
+                  {addressToBeShown[addressToBeShown.length - 1].streetOptional}
+                </p>
+                <p>
+                  {addressToBeShown[addressToBeShown.length - 1].city}
+                  {", "} {addressToBeShown[addressToBeShown.length - 1].state}{" "}
+                  {addressToBeShown[addressToBeShown.length - 1].zip}
+                </p>
+              </div>
+              <div>
+                <HomePage text="Change Address" />
+              </div>
+            </div>
+          </>
+        ) : (
+          <HomePage text="Add Address" />
+        )}
+
+        {/* Total summary   */}
+        <div className="w-[100%]  border-[1px] rounded-md border-[#EAEAF1] select-none p-3 max-w-[400px] mx-auto flex flex-col gap-[2px] text-[#53514D] text-lg font-medium cursor-default">
+          <h1 className="text-2xl font-semibold text-[#313131]">
+            Order Summary
+          </h1>
+          {/* delivery_charges */}
+          <div className="flex justify-between mt-2">
+            <span>Delivery Charges</span>
+            <span>
+              $
+              {productDetails
+                ? productDetails.delivery_charges +
+                  Number(orderDetails.products.quantity - 1) *
+                    Number(productDetails.increment)
+                : 0}
+            </span>
+          </div>
+          <div className="flex justify-between mt-2">
+            <span>Subtotal</span>
+            <span>
+              $
+              {productDetails
+                ? Number(productDetails.product_price) *
+                    orderDetails.products.quantity +
+                  (productDetails.delivery_charges +
+                    (orderDetails.products.quantity - 1) *
+                      productDetails.increment)
+                : 0}
+            </span>
+          </div>
+        </div>
         <section className="w-full">
           <PayPalScriptProvider options={initialOptions}>
             <PayPalButtons
+              disabled={
+                productDetails
+                  ? !(
+                      productDetails.delivery_charges != null &&
+                      addressToBeShown.length > 0
+                    )
+                  : false
+              }
               style={style}
               createOrder={async () => {
                 try {
@@ -174,7 +708,9 @@ export default function Single() {
                   });
 
                   const orderData = await response.json();
-
+                  if (!orderData.success) {
+                    console.log(orderData.error);
+                  }
                   if (orderData.id) {
                     return orderData.id;
                   } else {

@@ -8,8 +8,9 @@ export async function POST(req) {
 
     const user = await req.json();
     console.log("user", user);
-    const { product_id, quantity, color, size } = user;
+    const { product_id, quantity, color, size, delivery_charges } = user;
     const email = req.headers.get("email");
+    console.log("delivery_charges", delivery_charges.base_charge);
     const updatedUserCart = await User.findOneAndUpdate(
       { email },
       {
@@ -20,6 +21,7 @@ export async function POST(req) {
             quantity,
             color,
             size,
+            delivery_charges,
           },
         },
       },

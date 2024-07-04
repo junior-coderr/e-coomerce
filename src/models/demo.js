@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { type } = require("os");
 
 function connectDB() {
   return new Promise((resolve, reject) => {
@@ -38,10 +39,6 @@ const Product_Schema = mongoose.Schema(
       type: String,
       required: true,
     },
-    // product_images: {
-    //   type: Array,
-    //   required: true,
-    // },
     product_category: {
       type: String,
       required: true,
@@ -57,9 +54,6 @@ const Product_Schema = mongoose.Schema(
     additional_info: {
       type: Array,
     },
-    // colors: {
-    //   type: Array,
-    // },
     sizes: {
       type: Array,
     },
@@ -89,6 +83,34 @@ const Product_Schema = mongoose.Schema(
         },
       },
     ],
+    delivery_charges: [
+      {
+        country: {
+          type: String,
+          required: true,
+        },
+        base_charge: {
+          type: Number,
+          required: true,
+        },
+        increment: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
+    delivery_time: [
+      {
+        country: {
+          type: String,
+          required: true,
+        },
+        time: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
@@ -108,7 +130,9 @@ async function addProduct(
   // colors,
   sizes,
   specifics,
-  colorInfo
+  colorInfo,
+  delivery_charges,
+  delivery_time
 ) {
   const newProduct = new Product({
     product_name,
@@ -123,6 +147,8 @@ async function addProduct(
     sizes,
     specifics,
     colorInfo,
+    delivery_charges,
+    delivery_time,
   });
 
   return newProduct.save();
@@ -162,6 +188,37 @@ async function start() {
             "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-new-1-263x300.jpg",
             "https://woodmart.b-cdn.net/wp-content/uploads/2016/09/accessories1.jpg",
           ],
+        },
+      ],
+      [
+        {
+          country: "IN",
+          base_charge: 50,
+          increment: 10,
+        },
+        {
+          country: "US",
+          base_charge: 100,
+          increment: 20,
+        },
+        {
+          country: "GB",
+          base_charge: 100,
+          increment: 20,
+        },
+      ],
+      [
+        {
+          country: "IN",
+          time: "1-2 weeks",
+        },
+        {
+          country: "US",
+          time: "2-3 weeks",
+        },
+        {
+          country: "GB",
+          time: "2-3 weeks",
         },
       ]
     );

@@ -34,6 +34,16 @@ const userSchema = new mongoose.Schema(
         quantity: { type: Number, default: 1 },
         color: { type: String, default: "" },
         size: { type: String, default: "" },
+        delivery_charges: {
+          base_charge: {
+            type: Number,
+            default: 0,
+          },
+          increment: {
+            type: Number,
+            default: 0,
+          },
+        },
       },
     ],
     orders: [cartItemSchema],

@@ -17,6 +17,7 @@ import {
   ModalBody,
   ModalFooter,
 } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import toast from "react-hot-toast";
@@ -24,6 +25,7 @@ function Message({ content }) {
   return <p>{content}</p>;
 }
 export default function Multiple() {
+  const chakra_toast = useToast();
   const [addressToBeShown, setAddressToBeShown] = useState(null);
   const [isLoading, setIsLoading] = useState({});
   function removeItemFromCart(e) {
@@ -56,7 +58,7 @@ export default function Multiple() {
         setIsLoading({ ...isLoading, [product_id]: false });
       });
   }
-  function HomePage() {
+  function HomePage({ text }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [loading, setLoading] = useState(false);
     const countries = [
@@ -108,6 +110,7 @@ export default function Multiple() {
             body: JSON.stringify({
               address: {
                 country: selectedCountry,
+                code: selected,
                 firstName: isValid.firstNameValue,
                 phone: isValid.phoneValue,
                 street: isValid.streetValue,
@@ -125,6 +128,7 @@ export default function Multiple() {
           if (address.success) {
             setAddressToBeShown({
               country: selectedCountry,
+              code: selected,
               firstName: isValid.firstNameValue,
               phone: isValid.phoneValue,
               street: isValid.streetValue,
@@ -134,15 +138,15 @@ export default function Multiple() {
               zip: isValid.zipValue,
             });
 
+            getCartItems();
+
             onClose();
             console.log("Address added successfully");
             toast.success("Address added successfully");
           } else {
             toast.error("Could not add address");
           }
-          // return address;
         } catch (error) {
-          // console.error(error);
           toast.error("Could not add address error");
           setLoading(false);
         }
@@ -175,7 +179,7 @@ export default function Multiple() {
     return (
       <>
         <Button onClick={onOpen}>
-          <span className="text-[#3f3f3f]">Add Address</span>
+          <span className="text-[#3f3f3f]">{text}</span>
         </Button>
 
         <Modal
@@ -298,7 +302,6 @@ export default function Multiple() {
                     <input
                       type="text"
                       placeholder="Street, house/apartment*"
-                      // className="border-[1px] border-[#EAEAF1] p-2 w-full addrInp"
                       className={`border-[1px] border-[#EAEAF1] p-2 w-full ${
                         isValid.streetValue != ""
                           ? isValid.street
@@ -330,7 +333,6 @@ export default function Multiple() {
                     <input
                       type="text"
                       placeholder="City*"
-                      // className="border-[1px] border-[#EAEAF1] p-2 w-full"
                       className={`border-[1px] border-[#EAEAF1] p-2 w-full ${
                         isValid.cityValue != ""
                           ? isValid.city
@@ -412,6 +414,7 @@ export default function Multiple() {
 
   const [cartItems, setCartItems] = useState(null);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [deliveryCharges, setDeliveryCharges] = useState(0);
 
   useEffect(() => {
     console.log("addressToBeShown", addressToBeShown);
@@ -451,16 +454,38 @@ export default function Multiple() {
       });
 
       const cartItems = await response.json();
+      setDeliveryCharges(0);
       if (cartItems.success) {
         setCartItems(cartItems);
-        console.log("responseeee");
         console.log("cartItems", cartItems.cart);
         // calculating total
-        setAddressToBeShown(cartItems.address[0]);
+        setAddressToBeShown(cartItems.address[cartItems.address.length - 1]);
         let total = 0;
+        let deliveryCharges = 0;
         cartItems.cart.forEach((item) => {
           total += item.product.product_price * item.quantity;
+          deliveryCharges += getShippingharges(
+            item.product,
+            cartItems.address[cartItems.address.length - 1].code,
+            item.quantity
+          );
         });
+        setDeliveryCharges(deliveryCharges.toFixed(2));
+        if (!deliveryCharges) {
+          // adding delay to show toast
+          setTimeout(() => {
+            chakra_toast({
+              title: "Address Error",
+              position: "top",
+              description: "Unable to deliver to this address",
+              status: "error",
+              duration: 9000,
+              isClosable: true,
+            });
+          }, 1200);
+        }
+
+        total += deliveryCharges;
         setTotalAmount(total.toFixed(2));
       }
       return cartItems;
@@ -470,6 +495,30 @@ export default function Multiple() {
   };
 
   const [message, setMessage] = useState("");
+
+  const getShippingharges = (product, country, quantity, type = "DC") => {
+    if (!country) return 0;
+
+    let delivery_charges = null;
+    let delivery_time = null;
+
+    if (type == "DC") {
+      product.delivery_charges.forEach((charge) => {
+        if (charge.country == country) {
+          delivery_charges += Number(charge.base_charge);
+          delivery_charges += Number(charge.increment) * (quantity - 1);
+        }
+      });
+    } else {
+      product.delivery_time.forEach((time) => {
+        if (time.country == country) {
+          delivery_time = time.time;
+        }
+      });
+    }
+    if (type == "DT") return delivery_time;
+    return delivery_charges;
+  };
 
   return (
     <div className="w-full">
@@ -482,39 +531,66 @@ export default function Multiple() {
           cartItems.cart.map((item, index) => (
             <div
               key={index}
-              className="flex justify-between items-center  flex-shrink-0 border-[1px] w-full rounded-md border-[#EAEAF1] select-none"
+              className="border-[1px] w-full rounded-md border-[#EAEAF1] select-none"
             >
-              <div className="flex gap-2 items-center ">
-                <Image
-                  src={item.product.colorInfo[0].color_image[0]}
-                  alt={item.product.product_name}
-                  width={150}
-                  height={150}
-                />
-                <div className="text-md">
-                  {/* adding limit to product name */}
-                  <h3 className="font-semibold">
-                    {item.product.product_name.length > 20
-                      ? item.product.product_name.substring(0, 20) + "..."
-                      : item.product.product_name}
-                  </h3>
-                  <p>Price: ${item.product.product_price}</p>
-                  <p>Quantity: {item.quantity}</p>
-                  <p>Color: {item.color}</p>
-                  <p>Size: {item.size}</p>
+              <div className="flex justify-between items-center  flex-shrink-0 ">
+                <div className="flex gap-2 items-center ">
+                  <Image
+                    src={item.product.colorInfo[0].color_image[0]}
+                    alt={item.product.product_name}
+                    width={150}
+                    height={150}
+                  />
+                  <div className="text-md">
+                    {/* adding limit to product name */}
+                    <h3 className="font-semibold">
+                      {item.product.product_name.length > 20
+                        ? item.product.product_name.substring(0, 20) + "..."
+                        : item.product.product_name}
+                    </h3>
+                    <p>Price: ${item.product.product_price}</p>
+                    <p>Quantity: {item.quantity}</p>
+                    <p>Color: {item.color}</p>
+                    <p>Size: {item.size}</p>
+                  </div>
                 </div>
-              </div>
-              <Button
-                isLoading={isLoading[item.product_id]}
-                id={item.product_id}
-                onClick={removeItemFromCart}
-                className=" bg-[#EAEAF1] rounded-full w-0 h-0 flex justify-center items-center p-5 m-2 duration-500 hover:bg-red-100 cursor-pointer"
-              >
-                <i
-                  className="bi bi-trash text-xl text-black"
+                <Button
+                  isLoading={isLoading[item.product_id]}
                   id={item.product_id}
-                ></i>
-              </Button>
+                  onClick={removeItemFromCart}
+                  className=" bg-[#EAEAF1] rounded-full w-0 h-0 flex justify-center items-center p-5 m-2 duration-500 hover:bg-red-100 cursor-pointer"
+                >
+                  <i
+                    className="bi bi-trash text-xl text-black"
+                    id={item.product_id}
+                  ></i>
+                </Button>
+              </div>
+              {/* shipping details  */}
+              <div className="flex justify-end text-sm px-2 pb-1 flex-col font-semibold">
+                {}
+                <p>
+                  Shipping charges: $
+                  {addressToBeShown
+                    ? getShippingharges(
+                        item.product,
+                        addressToBeShown.code,
+                        item.quantity
+                      )
+                    : ""}
+                </p>
+                <p>
+                  Estimated Delivery time:{" "}
+                  {addressToBeShown
+                    ? getShippingharges(
+                        item.product,
+                        addressToBeShown.code,
+                        item.quantity,
+                        "DT"
+                      )
+                    : ""}
+                </p>
+              </div>
             </div>
           ))
         ) : (
@@ -522,40 +598,51 @@ export default function Multiple() {
         )}
         <br />
         {/* Adding address if present or showing button to add it */}
-        <div className="border-[1px] w-full rounded-md border-[#EAEAF1] select-none p-3">
-          <h3 className="text-2xl font-bold text-center mb-4">Delivery</h3>
+        <div
+          className={`border-[1px] w-full rounded-md select-none p-3 ${
+            deliveryCharges > 0 ? "border-[#EAEAF1]" : "border-[#ff6430]"
+          }`}
+        >
+          <h3 className="text-2xl font-bold text-center mb-4">
+            Shipping Address
+          </h3>
           {addressToBeShown ? (
-            <div className="flex justify-between items-center  flex-shrink-0">
-              {/* <div className="flex gap-2 items-center ">
+            <>
+              <div className="flex flex-wrap gap-3 justify-between items-center  flex-shrink-0">
+                {/* <div className="flex gap-2 items-center ">
                 <h3>Address-</h3>
               </div> */}
 
-              {/* <HomePage /> */}
-              {addressToBeShown ? (
+                {/* <HomePage /> */}
+                {addressToBeShown ? (
+                  <div>
+                    <p>
+                      {addressToBeShown.firstName}
+                      {", "} {addressToBeShown.phone}
+                    </p>
+                    <p>
+                      {addressToBeShown.street}
+                      {", "} {addressToBeShown.streetOptional}
+                    </p>
+                    <p>
+                      {addressToBeShown.city}
+                      {", "} {addressToBeShown.state} {addressToBeShown.zip}
+                    </p>
+                  </div>
+                ) : (
+                  "No address added yet"
+                )}
+                {/* <Button className=" bg-[#EAEAF1] rounded-full w-0 h-0 flex justify-center items-center p-5 duration-500 hover:bg-red-100 cursor-pointer">
+                  <i className="bi bi-trash text-xl text-black"></i>
+                </Button> */}
                 <div>
-                  <p>
-                    {addressToBeShown.firstName}
-                    {", "} {addressToBeShown.phone}
-                  </p>
-                  <p>
-                    {addressToBeShown.street}
-                    {", "} {addressToBeShown.streetOptional}
-                  </p>
-                  <p>
-                    {addressToBeShown.city}
-                    {", "} {addressToBeShown.state} {addressToBeShown.zip}
-                  </p>
+                  <HomePage text="Change Address" />
                 </div>
-              ) : (
-                "No address added yet"
-              )}
-              <Button className=" bg-[#EAEAF1] rounded-full w-0 h-0 flex justify-center items-center p-5 duration-500 hover:bg-red-100 cursor-pointer">
-                <i className="bi bi-trash text-xl text-black"></i>
-              </Button>
-            </div>
+              </div>
+            </>
           ) : (
             <div className="flex justify-center items-center  flex-shrink-0 ">
-              <HomePage />
+              <HomePage text="Add Address" />
             </div>
           )}
         </div>
@@ -568,6 +655,11 @@ export default function Multiple() {
               Summary
             </h3>
             <p>Total items: {cartItems ? cartItems.cart.length : 0}</p>
+            {/* addign total delivert charges */}
+            <p>
+              Total delivery charges: $
+              {cartItems && deliveryCharges ? deliveryCharges : 0}
+            </p>
             <p>Total amount: ${totalAmount}</p>
           </div>
         </div>
@@ -577,7 +669,10 @@ export default function Multiple() {
           <PayPalScriptProvider className="" options={initialOptions}>
             <PayPalButtons
               disabled={
-                totalAmount > 0 && addressToBeShown && cartItems.cart.length > 0
+                totalAmount > 0 &&
+                addressToBeShown &&
+                cartItems.cart.length > 0 &&
+                deliveryCharges > 0
                   ? false
                   : true
               }

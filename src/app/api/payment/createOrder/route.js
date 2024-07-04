@@ -31,34 +31,74 @@ const createOrder = async (data) => {
       if (!user) return { success: false, error: "User not found." };
 
       let total = null;
-      let purchaseUnits = {};
       console.log("is single", data.isSingle);
+      let delivery_charges = 0;
+
       if (data.isSingle) {
         const quantity = user.currentOrder[0].quantity;
         const price = await Product.findById(user.currentOrder[0].product_id);
-        total = parseInt(quantity) * parseFloat(price.product_price);
+        let d = null;
+        console.log("price", price);
+        for (let i = 0; i < price.toObject().delivery_charges.length; i++) {
+          if (
+            price.toObject().delivery_charges[i].country ===
+            user.address[user.address.length - 1].code
+          ) {
+            d = i;
+            break;
+          }
+        }
+        if (d == null)
+          return {
+            success: false,
+            error: "Product Not available in the address selected",
+          };
+
+        total +=
+          parseInt(quantity) * parseFloat(price.toObject().product_price);
+        console.log("total", total);
+        total += price.toObject().delivery_charges[d].base_charge;
+        total +=
+          price.toObject().delivery_charges[d].increment *
+          (parseInt(quantity) - 1);
+        console.log(
+          "increment",
+          price.toObject().delivery_charges[d].increment
+        );
+        console.log("base", price.toObject().delivery_charges[d].base_charge);
+        console.log("total", total);
       } else {
         total = 0;
 
         const item = await user.populate("cart.product");
+
         for (let i = 0; i < item.cart.length; i++) {
-          console.log("product price:", item.cart[i].product.product_price);
+          for (
+            let j = 0;
+            j < item.cart[i].product.delivery_charges.length;
+            j++
+          ) {
+            if (
+              item.cart[i].product.delivery_charges[j].country ==
+              user.address[user.address.length - 1].code
+            ) {
+              delivery_charges +=
+                item.cart[i].product.delivery_charges[j].base_charge;
+              delivery_charges +=
+                item.cart[i].product.delivery_charges[j].increment *
+                (item.cart[i].quantity - 1);
+            }
+          }
           total +=
             parseFloat(item.cart[i].product.product_price) *
             parseInt(item.cart[i].quantity);
-          console.log("total", total);
         }
-
-        // purchaseUnits = item.cart.map((product) => ({
-        //   name: product.product.product_name,
-        //   product_id: product.product._id,
-        //   color: product.color,
-        //   size: product.size,
-        //   quantity: product.quantity,
-        //   unit_amount: product.product.product_price,
-        // }));
-        // console.log("purchaseUnits", purchaseUnits);
+        console.log("total", total);
+        console.log("item", item);
+        console.log("delivery_charges", delivery_charges);
       }
+
+      total += Number(delivery_charges);
 
       if (!total) return { success: false, error: "Total not found." };
       const payload = {
