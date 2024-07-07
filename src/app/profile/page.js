@@ -64,7 +64,7 @@ export default async function Profile() {
           <div>
             {data.address ? (
               <div className="text-[16px] font-medium">
-                {data.address
+                {data.address && data.address.length > 0
                   ? data.address[data.address.length - 1].street +
                     " , " +
                     data.address[data.address.length - 1].streetOptional +
