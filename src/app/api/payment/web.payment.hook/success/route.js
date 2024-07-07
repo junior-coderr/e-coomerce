@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-// paypal webhook route
 export async function POST(req) {
   console.log("Success !webhook received");
   try {

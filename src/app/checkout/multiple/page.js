@@ -77,7 +77,7 @@ export default function Multiple() {
       firstName: false,
       firstNameValue: "",
       prefix: true,
-      prefixValue: "",
+      prefixValue: "+1",
       phone: false,
       phoneValue: "",
       street: false,
@@ -98,7 +98,8 @@ export default function Multiple() {
         isValid.street &&
         isValid.city &&
         isValid.state &&
-        isValid.zip
+        isValid.zip &&
+        isValid.prefix
       ) {
         setLoading(true);
         try {
@@ -111,6 +112,7 @@ export default function Multiple() {
               address: {
                 country: selectedCountry,
                 code: selected,
+                prefix: isValid.prefixValue,
                 firstName: isValid.firstNameValue,
                 phone: isValid.phoneValue,
                 street: isValid.streetValue,
@@ -129,6 +131,7 @@ export default function Multiple() {
             setAddressToBeShown({
               country: selectedCountry,
               code: selected,
+              prefix: isValid.prefixValue,
               firstName: isValid.firstNameValue,
               phone: isValid.phoneValue,
               street: isValid.streetValue,
@@ -216,6 +219,7 @@ export default function Multiple() {
                               setSelected(country.code);
                               setSelectedCountry(country.name);
                               setCountryPrefix(country.prefix);
+                              isValid.prefixValue = country.prefix;
                             }}
                           >
                             <Flag country={country.code} />
@@ -235,7 +239,6 @@ export default function Multiple() {
                     <input
                       type="text"
                       placeholder="First Name"
-                      // className="border-[1px] border-[#EAEAF1] p-2 addrInp"
                       className={`border-[1px] border-[#EAEAF1] p-2 ${
                         isValid.firstNameValue != ""
                           ? isValid.firstName
@@ -268,7 +271,11 @@ export default function Multiple() {
                           setCountryPrefix(e.target.value);
                           setIsValid({
                             ...isValid,
-                            prefix: e.target.value.includes("+") ? true : false,
+                            prefix:
+                              e.target.value.includes("+") &&
+                              e.target.value.length > 1
+                                ? true
+                                : false,
                             prefixValue: e.target.value,
                           });
                         }}
@@ -456,8 +463,8 @@ export default function Multiple() {
       const cartItems = await response.json();
       setDeliveryCharges(0);
       if (cartItems.success) {
+        console.log("cartItems", cartItems);
         setCartItems(cartItems);
-        console.log("cartItems", cartItems.cart);
         // calculating total
         setAddressToBeShown(cartItems.address[cartItems.address.length - 1]);
         let total = 0;
@@ -470,8 +477,9 @@ export default function Multiple() {
             item.quantity
           );
         });
+        console.log("deliveryCharges", deliveryCharges.toFixed(2) == false);
         setDeliveryCharges(deliveryCharges.toFixed(2));
-        if (!deliveryCharges) {
+        if (!deliveryCharges && cartItems.cart.length > 0) {
           // adding delay to show toast
           setTimeout(() => {
             chakra_toast({
@@ -520,6 +528,8 @@ export default function Multiple() {
     return delivery_charges;
   };
 
+  // TODO: ADDING INDIVIDUAL UNAVAILABILITY OF PRODUCT WITH RESPECT TO ADDRESS
+  // TODO: THIS CAN BE DONE JUST LOOKING AT D VAR IN getShippingharges FUNCTION if it null then not available
   return (
     <div className="w-full">
       <div className="absolute p-2 top-0 left-0">
@@ -527,7 +537,7 @@ export default function Multiple() {
       </div>
       <h1 className=" text-center text-2xl font-bold py-2">Checkout items</h1>
       <section className="flex flex-col gap-2">
-        {cartItems ? (
+        {cartItems && cartItems.cart.length > 0 ? (
           cartItems.cart.map((item, index) => (
             <div
               key={index}
@@ -542,7 +552,6 @@ export default function Multiple() {
                     height={150}
                   />
                   <div className="text-md">
-                    {/* adding limit to product name */}
                     <h3 className="font-semibold">
                       {item.product.product_name.length > 20
                         ? item.product.product_name.substring(0, 20) + "..."
@@ -600,7 +609,7 @@ export default function Multiple() {
         {/* Adding address if present or showing button to add it */}
         <div
           className={`border-[1px] w-full rounded-md select-none p-3 ${
-            deliveryCharges > 0 ? "border-[#EAEAF1]" : "border-[#ff6430]"
+            deliveryCharges != 0 ? "border-[#EAEAF1]" : "border-[#ff6430]"
           }`}
         >
           <h3 className="text-2xl font-bold text-center mb-4">
@@ -632,9 +641,7 @@ export default function Multiple() {
                 ) : (
                   "No address added yet"
                 )}
-                {/* <Button className=" bg-[#EAEAF1] rounded-full w-0 h-0 flex justify-center items-center p-5 duration-500 hover:bg-red-100 cursor-pointer">
-                  <i className="bi bi-trash text-xl text-black"></i>
-                </Button> */}
+
                 <div>
                   <HomePage text="Change Address" />
                 </div>

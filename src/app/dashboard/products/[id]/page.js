@@ -146,7 +146,8 @@ export default function Page({ params }) {
 
     setIsLoading(true);
     toast.loading("loading");
-    console.log("delivery charges", productData.delivery_charges);
+    // console.log("delivery charges", productData.delivery_charges);
+    console.log("data Id", productData._id);
     fetch("/api/add-cart", {
       method: "POST",
       headers: {

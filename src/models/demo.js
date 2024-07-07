@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { type } = require("os");
 
 function connectDB() {
   return new Promise((resolve, reject) => {
@@ -178,6 +177,10 @@ async function start() {
             "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8.jpg",
             "https://woodmart.b-cdn.net/wp-content/uploads/2016/09/product-clock-1-3.jpg",
             "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-new-1.jpg",
+            "https://woodmart.b-cdn.net/wp-content/uploads/2016/09/product-clock-1-3.jpg",
+            "https://woodmart.b-cdn.net/wp-content/uploads/2016/08/product-accessories-8.jpg",
+            "https://woodmart.b-cdn.net/wp-content/uploads/2016/09/product-clock-1-3.jpg",
+            "https://woodmart.b-cdn.net/wp-content/uploads/2016/09/product-clock-1-3.jpg",
           ],
         },
         {

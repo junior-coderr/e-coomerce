@@ -10,6 +10,8 @@ async function getname() {
   const res = await axios.post(`${baseUrl}/api/verified/get_profile`, {
     token: cookies().get("token") ? cookies().get("token").value : "",
   });
+  console.log("ddd", res.data.data.address);
+  console.log("add");
   return res.data.data;
 }
 
@@ -19,7 +21,7 @@ export default async function Profile() {
 
   return (
     <>
-      <div className="border-[1px] flex gap-2 flex-col rounded-md p-2">
+      <div className="border-[1px] flex gap-1 flex-col rounded-md p-2">
         {/* //? options  */}
         <div className="flex justify-between items-center p-2 pb-1">
           <span className="text-xl font-extrabold">User details</span>
@@ -31,20 +33,24 @@ export default async function Profile() {
         <div className="flex flex-col gap-[2px] p-2 pt-0">
           <div className="flex gap-2 items-center">
             <i className="bi bi-envelope-fill text-[#017BF9] text-xl"></i>
-            <h3 className="text-[18px] font-medium">Email :</h3>
+            <h3 className="">Email :</h3>
           </div>
 
-          <div className="text-[16px] break-words">{data.email}</div>
+          <div className="text-[16px] font-medium reak-words">{data.email}</div>
         </div>
 
         {/* //*phone */}
         <div className="flex flex-col gap-[2px] p-2">
           <div className="flex gap-2 items-center">
             <i className="bi bi-phone-fill text-[#017BF9] text-xl"></i>
-            <h3 className="text-[18px] font-medium">Phone no :</h3>
+            <h3 className="">Phone no :</h3>
           </div>
-          <div className="text-[16px] ">
-            {data.phone ? data.phone : "something here!!"}
+          <div className="text-[16px] font-medium">
+            {data.address
+              ? data.address[data.address.length - 1].prefix +
+                " " +
+                data.address[data.address.length - 1].phone
+              : "something here!!"}
           </div>
         </div>
 
@@ -53,7 +59,28 @@ export default async function Profile() {
         <div className="flex flex-col gap-[2px] p-2">
           <div className="flex gap-2 items-center">
             <i className="bi bi-geo-alt-fill text-[#017BF9] text-xl"></i>
-            <h3 className="text-[18px] font-medium">Address :</h3>
+            Address :
+          </div>
+          <div>
+            {data.address ? (
+              <div className="text-[16px] font-medium">
+                {data.address
+                  ? data.address[data.address.length - 1].street +
+                    " , " +
+                    data.address[data.address.length - 1].streetOptional +
+                    " , " +
+                    data.address[data.address.length - 1].city +
+                    ", " +
+                    data.address[data.address.length - 1].state +
+                    ", " +
+                    data.address[data.address.length - 1].country +
+                    " - " +
+                    data.address[data.address.length - 1].zip
+                  : ""}
+              </div>
+            ) : (
+              "something here!!"
+            )}
           </div>
           <div className="text-[16px]">
             {/* {data.address != "" ? data.address : "something here!!"} */}

@@ -23,8 +23,15 @@ import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import toast from "react-hot-toast";
 
 // Renders errors or successfull transactions on the screen.
-function Message({ content }) {
-  return <p>{content}</p>;
+function Message(props) {
+  const { success, error, content } = props.res;
+  if (success) {
+    toast.success("Transaction was successful!");
+  } else if (error) {
+    toast.error("Transaction failed!");
+  } else {
+    return null;
+  }
 }
 export default function Single() {
   const chakra_toast = useToast();
@@ -48,7 +55,7 @@ export default function Single() {
       firstName: false,
       firstNameValue: "",
       prefix: true,
-      prefixValue: "",
+      prefixValue: "+1",
       phone: false,
       phoneValue: "",
       street: false,
@@ -69,7 +76,8 @@ export default function Single() {
         isValid.street &&
         isValid.city &&
         isValid.state &&
-        isValid.zip
+        isValid.zip &&
+        isValid.prefix
       ) {
         setLoading(true);
         try {
@@ -82,6 +90,7 @@ export default function Single() {
               address: {
                 country: selectedCountry,
                 code: selected,
+                prefix: isValid.prefixValue,
                 firstName: isValid.firstNameValue,
                 phone: isValid.phoneValue,
                 street: isValid.streetValue,
@@ -203,6 +212,7 @@ export default function Single() {
                               setSelected(country.code);
                               setSelectedCountry(country.name);
                               setCountryPrefix(country.prefix);
+                              isValid.prefixValue = country.prefix;
                             }}
                           >
                             <Flag country={country.code} />
@@ -242,7 +252,6 @@ export default function Single() {
                       <input
                         type="text"
                         placeholder="+"
-                        // className="border-[1px] border-[#EAEAF1] p-2 max-w-[60px]"
                         className={`border-[1px] border-[#EAEAF1] p-2 max-w-[60px] ${
                           isValid.prefixValue != ""
                             ? isValid.prefix
@@ -253,9 +262,14 @@ export default function Single() {
                         value={countryPrefix}
                         onChange={(e) => {
                           setCountryPrefix(e.target.value);
+                          console.log("e.target.value", e.target.value);
                           setIsValid({
                             ...isValid,
-                            prefix: e.target.value.includes("+") ? true : false,
+                            prefix:
+                              e.target.value.includes("+") &&
+                              e.target.value.length > 1
+                                ? true
+                                : false,
                             prefixValue: e.target.value,
                           });
                         }}
@@ -441,18 +455,21 @@ export default function Single() {
     loadProductDetails()
       .then((res) => {
         if (res.success) {
-          setProductDetails({
-            ...res.data,
-            delivery_charges: res.delivery_charges,
-            increment: res.increment,
-            estimated_delivery_time: res.estimated_delivery_time,
-          });
           console.log("returned 2", {
             ...res.data,
             delivery_charges: res.delivery_charges,
             increment: res.increment,
             estimated_delivery_time: res.estimated_delivery_time,
           });
+          setProductDetails({
+            ...res.data,
+            delivery_charges: res.delivery_charges ? res.delivery_charges : 0,
+            increment: res.increment ? res.increment : 0,
+            estimated_delivery_time: res.estimated_delivery_time
+              ? res.estimated_delivery_time
+              : 0,
+          });
+
           setAddressToBeShown(res.address);
         }
       })
@@ -484,11 +501,12 @@ export default function Single() {
       let t = null;
       console.log("time", data.delivery_time);
       console.log("Address", data.address);
+      console.log("delivery charges", data.delivery_charges);
       for (let i = 0; i < data.delivery_charges.length; i++) {
-        // console.log()
         if (
+          data.address.length != 0 &&
           data.delivery_charges[i].country ===
-          data.address[data.address.length - 1].code
+            data.address[data.address.length - 1].code
         ) {
           d = i;
           console.log("matched once");
@@ -496,8 +514,9 @@ export default function Single() {
         }
 
         if (
+          data.address.length != 0 &&
           data.delivery_time[i].country ===
-          data.address[data.address.length - 1].code
+            data.address[data.address.length - 1].code
         ) {
           console.log("matched once");
           t = i;
@@ -505,18 +524,18 @@ export default function Single() {
         }
       }
 
-      if (d == null) {
-        chakra_toast({
-          title: "Address Error",
-          position: "top",
-          description: "Unable to deliver to this address",
-          status: "error",
-          duration: 9000,
-          isClosable: true,
-        });
-        // settin it up for manual cancle
-        // toast.error("Unable to deliver to this address", { duration: 5000 });
-      }
+      setTimeout(() => {
+        if (d == null && data.address.length != 0) {
+          chakra_toast({
+            title: "Address Error",
+            position: "top",
+            description: "Unable to deliver to this address",
+            status: "error",
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+      }, 1200);
       console.log("d", d);
       return {
         success: true,
@@ -612,14 +631,9 @@ export default function Single() {
         {/* <Address /> */}
         {addressToBeShown && addressToBeShown.length > 0 ? (
           <>
-            {/* ${
-                // productDetails.delivery_charges == null
-                // ? "border-[#EAEAF1]"
-                "border-[#e13100]"
-              } */}
             <div
               className={`${
-                productDetails.delivery_charges != null
+                productDetails.delivery_charges
                   ? "border-[#EAEAF1]"
                   : "border-[#e13100]"
               } w-[100%] border-[1px] rounded-md  select-none p-3 max-w-[400px] mx-auto flex flex-wrap gap-2 text-[#53514D] text-lg font-medium cursor-default`}
@@ -640,6 +654,7 @@ export default function Single() {
                 <p>
                   {addressToBeShown[addressToBeShown.length - 1].city}
                   {", "} {addressToBeShown[addressToBeShown.length - 1].state}{" "}
+                  {addressToBeShown[addressToBeShown.length - 1].country} -{" "}
                   {addressToBeShown[addressToBeShown.length - 1].zip}
                 </p>
               </div>
@@ -689,7 +704,7 @@ export default function Single() {
               disabled={
                 productDetails
                   ? !(
-                      productDetails.delivery_charges != null &&
+                      productDetails.delivery_charges &&
                       addressToBeShown.length > 0
                     )
                   : false
@@ -761,9 +776,11 @@ export default function Single() {
                     // Or go to another URL:  actions.redirect('thank_you.html');
                     const transaction =
                       orderData.purchase_units[0].payments.captures[0];
-                    setMessage(
-                      `Transaction ${transaction.status}: ${transaction.id}. See console for all available details`
-                    );
+                    setMessage({
+                      success: true,
+                      content: transaction,
+                      error: null,
+                    });
                     console.log(
                       "Capture result",
                       orderData,
@@ -772,9 +789,11 @@ export default function Single() {
                   }
                 } catch (error) {
                   console.error(error);
-                  setMessage(
-                    `Sorry, your transaction could not be processed...${error}`
-                  );
+                  setMessage({
+                    success: false,
+                    error: error,
+                    content: "An error occurred while processing the payment",
+                  });
                 }
               }}
               onShippingChange={async (data, actions) => {
@@ -782,13 +801,15 @@ export default function Single() {
               }}
               onError={(error) => {
                 console.error(error);
-                setMessage(
-                  `Sorry, your transaction could not be processed...${error}`
-                );
+                setMessage({
+                  success: false,
+                  error: error,
+                  content: "An error occurred while processing the payment",
+                });
               }}
             />
           </PayPalScriptProvider>
-          <Message content={message} />
+          <Message res={message} />
         </section>
       </div>
     </>

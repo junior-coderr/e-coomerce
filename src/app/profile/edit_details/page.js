@@ -84,7 +84,13 @@ export default function Edit() {
           >
             <input
               className="text-[16px] bg-gray-100 p-2 rounded-md border-2 w-full"
-              value={data.phone ? data.phone : ""}
+              value={
+                data.address
+                  ? data.address[data.address.length - 1].prefix +
+                    " " +
+                    data.address[data.address.length - 1].phone
+                  : ""
+              }
             />
             <div>
               <Link href={"/dashbaord"} className={inp2 ? "block" : "hidden"}>
@@ -112,7 +118,21 @@ export default function Edit() {
           >
             <input
               className="text-[16px] bg-gray-100 p-2 rounded-md border-2 w-full"
-              // value={data.address ? data.address : ""}
+              value={
+                data.address
+                  ? data.address[data.address.length - 1].street +
+                    " , " +
+                    data.address[data.address.length - 1].streetOptional +
+                    " , " +
+                    data.address[data.address.length - 1].city +
+                    ", " +
+                    data.address[data.address.length - 1].state +
+                    ", " +
+                    data.address[data.address.length - 1].country +
+                    " - " +
+                    data.address[data.address.length - 1].zip
+                  : ""
+              }
             />
             <div>
               <Link href={"/dashbaord"} className={inp3 ? "block" : "hidden"}>

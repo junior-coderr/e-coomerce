@@ -1,4 +1,3 @@
-// import { resend } from "./resend";
 import ChangeEmail from "../../emails/change_email.jsx";
 import nodemailer from "nodemailer";
 import { render } from "@react-email/render";
@@ -9,13 +8,13 @@ export const updateVerificationEmail = async (token, email) => {
       let transporter = nodemailer.createTransport({
         service: "Gmail",
         auth: {
-          user: "pratikmishra1833@gmail.com",
-          pass: "bdmp knzo cqyl popv",
+          user: process.env.EMAIL,
+          pass: process.env.GMAIL_PASS,
         },
       });
 
       let mailOptions = {
-        from: "pratikmishra1833@gmail.com",
+        from: process.env.EMAIL,
         to: email,
         subject: "Test Email",
 
