@@ -46,7 +46,7 @@ export default async function Profile() {
             <h3 className="">Phone no :</h3>
           </div>
           <div className="text-[16px] font-medium">
-            {data.address
+            {data.address && data.address.length > 0
               ? data.address[data.address.length - 1].prefix +
                 " " +
                 data.address[data.address.length - 1].phone
