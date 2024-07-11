@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 // captureOrder.js
 const captureOrder = async (orderID) => {
   const accessToken = await generateAccessToken();
-  const url = `${base}/v2/checkout/orders/${orderID}/capture`;
+  const url = `${base}/v2/checkout/orders/${orderID}/authorize`; // cc
   console.log("captureOrder url:", url);
   console.log("orderID:", orderID);
   const response = await fetch(url, {
@@ -31,6 +31,7 @@ export async function POST(req, { params }) {
   try {
     const { id } = params;
     const { jsonResponse, httpStatusCode } = await captureOrder(id);
+    console.log("this is running !!");
     console.log("jsonResponse: ", jsonResponse);
     console.log("httpStatusCode: ", httpStatusCode);
     return NextResponse.json(jsonResponse, { status: httpStatusCode });

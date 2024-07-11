@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["woodmart.b-cdn.net"],
+    domains: ["woodmart.b-cdn.net", "images.unsplash.com"],
   },
   reactStrictMode: false,
   api: {

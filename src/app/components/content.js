@@ -1,7 +1,16 @@
 "use client";
+
+import React, { use } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+
 import Image from "next/image";
 import { Prompt } from "next/font/google";
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchProducts } from "../../redux/slices/fetchProduct.thunk";
@@ -21,8 +30,33 @@ export default function AnimatedListComponent() {
   const loader = useRef(null);
   const [fetchLoading, setFetchLoading] = useState(false);
 
+  const router = useRouter();
   const dispatch = useDispatch();
   const { products } = useSelector((state) => state.products);
+  const [hotProducts, setHotProducts] = useState([{}]);
+  const [activeSlide, setActiveSlide] = useState({
+    activeIndex: 0,
+    products: "",
+  });
+
+  // get hot products from the server
+
+  useEffect(() => {
+    fetch("/api/fetch-hot", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setHotProducts(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   useEffect(() => {
     const options = {
@@ -69,14 +103,44 @@ export default function AnimatedListComponent() {
         {/* <br /> */}
 
         <div>
-          <div className=" gap-8 p-6  bg-[#f3f8fd] rounded-md  mb-10 flex flex-col md:flex-row-reverse justify-center md:justify-between items-center ">
-            <div className="">
-              <Image
-                className=""
-                src="https://woodmart.b-cdn.net/wp-content/uploads/2024/02/slider-main-demo-3-light-opt.jpg.webp"
-                width={500}
-                height={500}
-              ></Image>
+          <div className=" gap-20 p-6  bg-[#f3f8fd] rounded-md  mb-10 flex flex-col md:flex-row-reverse justify-center md:justify-between items-center ">
+            <div className="relative w-[290px] sm:w-[350px] md:w-[450px] overflow-auto">
+              <Swiper
+                modules={[Navigation, Pagination, Autoplay]}
+                spaceBetween={50}
+                slidesPerView={1}
+                loop={true}
+                pagination={{ clickable: true }}
+                autoplay={{ delay: 3000, disableOnInteraction: false }}
+                onSlideChange={(swiper) => {
+                  console.log(swiper.realIndex);
+                  setActiveSlide({
+                    activeIndex: swiper.realIndex,
+                    product_id: hotProducts[swiper.realIndex]?.product_id,
+                  });
+                }}
+              >
+                {hotProducts && hotProducts.length > 0
+                  ? hotProducts.map((item, index) => (
+                      <SwiperSlide key={index}>
+                        <Image
+                          onLoad={(e) => {
+                            e.target.style.display = "block";
+                          }}
+                          onClick={() => {
+                            router.push(
+                              `/dashboard/products/${item.product_id}`
+                            );
+                          }}
+                          className="hidden cursor-pointer"
+                          src={item.hotImages}
+                          width={500}
+                          height={500}
+                        ></Image>
+                      </SwiperSlide>
+                    ))
+                  : "Loading..."}
+              </Swiper>
             </div>
             <div className="p- flex flex-col gap-y-6">
               <div className="text-5xl font-[700] text-[#05386a] ">
@@ -113,7 +177,14 @@ export default function AnimatedListComponent() {
 
               {/* buttons  */}
               <div className="flex gap-2 font-[600] justify-center items-center">
-                <button className="bg-[#017BF9] shadow-lg  text-white p-3 px-6 text-lg rounded-md">
+                <button
+                  className="bg-[#017BF9] shadow-lg  text-white p-3 px-6 text-lg rounded-md"
+                  onClick={() => {
+                    router.push(
+                      `/dashboard/products/${activeSlide.product_id}`
+                    );
+                  }}
+                >
                   Shop Now <i className="bi bi-arrow-right"></i>
                 </button>
               </div>

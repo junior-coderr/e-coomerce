@@ -18,6 +18,7 @@ import {
   ModalFooter,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/react";
 
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import toast from "react-hot-toast";
@@ -35,6 +36,7 @@ function Message(props) {
 }
 export default function Single() {
   const chakra_toast = useToast();
+
   function HomePage({ text }) {
     // const toast = useToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -426,7 +428,7 @@ export default function Single() {
     "data-page-type": "product-details",
     components: "buttons",
     "data-sdk-integration-source": "developer-studio",
-    intent: "capture",
+    intent: "authorize", //cc
   };
 
   const style = {
@@ -625,7 +627,7 @@ export default function Single() {
             </div>
           </div>
         ) : (
-          "loading..."
+          <Spinner />
         )}
 
         {/* <Address /> */}
@@ -755,12 +757,15 @@ export default function Single() {
                   );
 
                   const orderData = await response.json();
+
+                  console.log("dtata", orderData);
                   // Three cases to handle:
                   //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
                   //   (2) Other non-recoverable errors -> Show a failure message
                   //   (3) Successful transaction -> Show confirmation or thank you message
 
                   const errorDetail = orderData?.details?.[0];
+                  console.log("errorDetail", errorDetail);
 
                   if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
                     // (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
@@ -768,27 +773,40 @@ export default function Single() {
                     return actions.restart();
                   } else if (errorDetail) {
                     // (2) Other non-recoverable errors -> Show a failure message
-                    throw new Error(
+
+                    console.log(
+                      "middle",
                       `${errorDetail.description} (${orderData.debug_id})`
                     );
+                    // throw new Error(
+                    //   `${errorDetail.description} (${orderData.debug_id})`
+                    // );
                   } else {
                     // (3) Successful transaction -> Show confirmation or thank you message
                     // Or go to another URL:  actions.redirect('thank_you.html');
-                    const transaction =
-                      orderData.purchase_units[0].payments.captures[0];
-                    setMessage({
-                      success: true,
-                      content: transaction,
-                      error: null,
-                    });
+                    // const transaction =
+                    //   orderData.purchase_units[0].payments.captures[0];
+                    if (orderData.status === "COMPLETED") {
+                      setMessage({
+                        success: true,
+                        content:
+                          "Transaction completed by " +
+                          orderData.payer.name.given_name,
+                        error: null,
+                      });
+                    } else {
+                      console.log("fnvndn dfnvo");
+                    }
                     console.log(
                       "Capture result",
-                      orderData,
-                      JSON.stringify(orderData, null, 2)
+                      orderData
+                      // JSON.stringify(orderData, null, 2)
                     );
                   }
                 } catch (error) {
                   console.error(error);
+
+                  console.log("error", error);
                   setMessage({
                     success: false,
                     error: error,

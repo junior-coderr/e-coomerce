@@ -18,6 +18,7 @@ import {
   ModalFooter,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/react";
 
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import toast from "react-hot-toast";
@@ -603,7 +604,7 @@ export default function Multiple() {
             </div>
           ))
         ) : (
-          <p>No items in cart</p>
+          <div className="text-center">No items in cart</div>
         )}
         <br />
         {/* Adding address if present or showing button to add it */}

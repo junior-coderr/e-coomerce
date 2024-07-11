@@ -42,15 +42,7 @@ export default function RootLayout({ children }) {
           >
             Orders
           </Link>
-          {/* <Link
-            href="/dashboard"
-            className={`${
-              pathname == "/dashboard/about" ? style : "opacity-50"
-            } ${"cursor-pointer hover:opacity-100 hover:font-semibold duration-75 rounded-sm hover:border-r-[3px] border-r-theme w-[85px] font-medium p-2"}`}
-            id="about"
-          >
-            Profile
-          </Link> */}
+
           <Link
             href="/contact"
             className={`${

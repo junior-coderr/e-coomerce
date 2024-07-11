@@ -25,6 +25,7 @@ import "swiper/css/thumbs";
 import "swiper/css/free-mode";
 import Back from "@/app/profile/profile_components/button/back_btn";
 import toast from "react-hot-toast";
+import { Spinner } from "@chakra-ui/react";
 
 export default function Page({ params }) {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -39,6 +40,7 @@ export default function Page({ params }) {
   const [pageLoaded, setPageLoaded] = useState(false);
   const [isCarted, setIsCarted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const router = useRouter();
   // redux store
@@ -146,8 +148,6 @@ export default function Page({ params }) {
 
     setIsLoading(true);
     toast.loading("loading");
-    // console.log("delivery charges", productData.delivery_charges);
-    console.log("data Id", productData._id);
     fetch("/api/add-cart", {
       method: "POST",
       headers: {
@@ -208,34 +208,37 @@ export default function Page({ params }) {
               }}
               spaceBetween={20}
               modules={[FreeMode, Thumbs, Navigation, Pagination]}
-              className="mySwiper"
+              className="mySwiper relative h-[500px]"
             >
-              {imagesToBEShown
-                ? imagesToBEShown.map((image, index) => (
-                    <SwiperSlide key={index}>
-                      <Zoom>
-                        {width > 850 && (
-                          <div
-                            className="w-full cursor-zoom-in h-full absolute top-0 left-0 bg-cover"
-                            style={{
-                              backgroundSize: "200%",
-                              backgroundPosition: "50% 50%",
-                            }}
-                            onMouseMove={(e) => zoomMove(e, image)}
-                            onMouseLeave={zoomDone}
-                          ></div>
-                        )}
-                        <Image
-                          className="rounded-md border-[1px] border-[#EAEAF1] select-none"
-                          src={image}
-                          width={500}
-                          height={500}
-                          alt="Picture of the watch"
-                        />
-                      </Zoom>
-                    </SwiperSlide>
-                  ))
-                : null}
+              {imagesToBEShown ? (
+                imagesToBEShown.map((image, index) => (
+                  <SwiperSlide key={index}>
+                    <Zoom>
+                      {width > 850 && (
+                        <div
+                          className="w-full cursor-zoom-in h-full absolute top-0 left-0 bg-cover"
+                          style={{
+                            backgroundSize: "200%",
+                            backgroundPosition: "50% 50%",
+                          }}
+                          onMouseMove={(e) => zoomMove(e, image)}
+                          onMouseLeave={zoomDone}
+                        ></div>
+                      )}
+                      <Image
+                        className="rounded-md border-[1px] border-[#EAEAF1] select-none"
+                        src={image}
+                        width={500}
+                        height={500}
+                      />
+                    </Zoom>
+                  </SwiperSlide>
+                ))
+              ) : (
+                <div className="absolute top-0 left-0 flex items-center justify-center w-full h-full">
+                  <Spinner />
+                </div>
+              )}
             </Swiper>
           </div>
 

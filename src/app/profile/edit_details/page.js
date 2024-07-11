@@ -85,7 +85,7 @@ export default function Edit() {
             <input
               className="text-[16px] bg-gray-100 p-2 rounded-md border-2 w-full"
               value={
-                data.address
+                data.address && data.address.length > 0
                   ? data.address[data.address.length - 1].prefix +
                     " " +
                     data.address[data.address.length - 1].phone
@@ -119,7 +119,7 @@ export default function Edit() {
             <input
               className="text-[16px] bg-gray-100 p-2 rounded-md border-2 w-full"
               value={
-                data.address
+                data.address && data.address.length > 0
                   ? data.address[data.address.length - 1].street +
                     " , " +
                     data.address[data.address.length - 1].streetOptional +

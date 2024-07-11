@@ -102,7 +102,7 @@ const createOrder = async (data) => {
 
       if (!total) return { success: false, error: "Total not found." };
       const payload = {
-        intent: "CAPTURE",
+        intent: "AUTHORIZE", //cc
         purchase_units: [
           {
             amount: {
